@@ -1,12 +1,13 @@
 {
-  "name": "Treat Track β",
-  "short_name": "Treat Track β",
+  "id": "./?app=treattrack-beta",
+  "name": "Treat Track Beta",
+  "short_name": "TT Beta",
   "description": "BETA test build of Treat Track",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f0f13",
-  "theme_color": "#0f0f13",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
   "orientation": "portrait",
   "icons": [
     {

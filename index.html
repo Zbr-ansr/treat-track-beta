@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Treat Track β</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f0f13">
+<meta name="theme-color" content="#0A0A0A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Treat Track β">
@@ -17,166 +17,168 @@
   }
 </script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --bg: #0f0f13; --card: #1a1a24; --card2: #22222f;
-    --text: #f0f0f0; --muted: #777; --border: #2a2a3a;
-    --c1: #4ade80; --c2: #a3e635; --c3: #f7c948; --c4: #fb923c; --c5: #ff6b6b;
-  }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-  .app { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
-  .setup-wrap { max-width: 480px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-  .setup-hero { text-align: center; padding-bottom: 32px; }
-  .setup-hero h1 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
-  .setup-card { background: var(--card); border-radius: 22px; padding: 28px 22px; }
-  .setup-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-  .inp-wrap { position: relative; }
-  .inp-wrap span { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 22px; font-weight: 700; color: var(--muted); }
-  .big-input { width: 100%; padding: 16px 16px 16px 42px; font-size: 28px; font-weight: 800; background: var(--card2); border: 2px solid var(--border); border-radius: 14px; color: var(--text); outline: none; -moz-appearance: textfield; }
-  .big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .big-input:focus { border-color: var(--c3); }
-  .preview-box { margin-top: 14px; display: none; }
-  .preview-box.show { display: block; }
-  .per-q { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-  .per-q span { color: var(--text); font-weight: 700; }
-  .preview-quarters { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
-  .pq-cell { background: var(--card2); border-radius: 10px; padding: 10px 6px; text-align: center; }
-  .pq-cell .ql { font-size: 11px; color: var(--muted); font-weight: 700; }
-  .pq-cell .qd { font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .pq-cell .qa { font-size: 14px; font-weight: 800; margin-top: 4px; }
-  .btn { padding: 15px 24px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all .15s; }
-  .btn-primary { background: var(--c3); color: #000; width: 100%; margin-top: 18px; }
-  .btn-primary:active { opacity: .85; transform: scale(.98); }
-  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); z-index: 50; }
-  .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; padding: 6px 40px; transition: color .2s; }
-  .nav-icon { font-size: 24px; line-height: 1; }
-  .nav-btn.active { color: var(--c3); }
-  .home-date { text-align: center; margin-bottom: 28px; }
-  .home-date .d1 { font-size: 13px; color: var(--muted); }
-  .home-date .d2 { font-size: 17px; font-weight: 700; margin-top: 2px; }
-  .circle-wrap { display: flex; flex-direction: column; align-items: center; }
-  .big-circle { width: 280px; height: 280px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid; transition: border-color .5s, box-shadow .5s; }
-  .circle-q     { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 4px; text-align: center; }
-  .circle-dates { font-size: 12px; color: var(--muted); margin-bottom: 14px; text-align: center; }
-  .circle-bal   { font-size: 40px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-align: center; transition: color .5s; }
-  .plus-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--c3); border: none; font-size: 28px; color: #000; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; margin-top: 18px; }
-  .plus-btn:active { transform: scale(.92); }
-  .q-dots { display: flex; gap: 14px; margin-top: 24px; align-items: center; }
-  .q-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
-  .q-dot.future { border-color: var(--border); color: var(--muted); background: transparent; }
-  .q-dot.done   { border-color: var(--border); color: var(--muted); background: var(--border); }
-  .expired-banner { background: rgba(255,107,107,.1); border: 1px solid var(--c5); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px; }
-  .expired-banner h3 { color: var(--c5); font-size: 16px; margin-bottom: 8px; }
-  .expired-banner p { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--card); border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); width: 100%; max-width: 480px; transform: translateY(60px); transition: transform .28s; }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
-  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; text-align: center; }
-  .field { margin-bottom: 13px; }
-  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-  .field input, .field select { width: 100%; padding: 13px; background: var(--card2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; outline: none; -moz-appearance: textfield; }
-  .field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .field input:focus, .field select:focus { border-color: var(--c3); }
-  .overflow-warning { background: rgba(255,107,107,.12); border: 1px solid var(--c5); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--c5); margin-bottom: 12px; display: none; }
-  .overflow-warning.show { display: block; }
-  .settings-wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
-  .gear-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; margin-top: 8px; }
-  .settings-menu { background: var(--card); border-radius: 18px; overflow: hidden; }
-  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
-  .settings-row:last-child { border-bottom: none; }
-  .settings-row:active { background: var(--card2); }
-  .settings-row span { font-size: 15px; font-weight: 600; }
-  .settings-row .arr { color: var(--muted); font-size: 18px; }
-  .settings-row.danger span { color: var(--c5); }
-  .subpage { display: none; }
-  .subpage.active { display: block; }
-  .back-btn { background: none; border: none; color: var(--c3); font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 6px; padding: 0; }
-  .history-item { background: var(--card); border-radius: 14px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .hi-icon { font-size: 20px; width: 38px; height: 38px; background: var(--card2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .hi-name { font-weight: 600; font-size: 14px; }
-  .hi-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .hi-price { font-weight: 800; font-size: 15px; color: var(--c3); }
-  .del-btn { background: none; border: none; color: var(--muted); font-size: 17px; cursor: pointer; padding: 4px 4px 4px 10px; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .big { font-size: 44px; margin-bottom: 12px; }
-  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 9px; }
-  .page-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
-  .stat-card { background: var(--card); border-radius: 14px; padding: 15px; text-align: center; }
-  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 5px; }
-  .stat-value { font-size: 20px; font-weight: 800; }
-  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .bar-label { font-size: 12px; width: 72px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bar-track { flex: 1; height: 7px; background: var(--border); border-radius: 4px; }
-  .bar-fill { height: 100%; border-radius: 4px; }
-  .bar-val { font-size: 11px; color: var(--muted); width: 30px; text-align: right; flex-shrink: 0; }
-  .time-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-  .time-cell { background: var(--card2); border-radius: 10px; padding: 10px 4px; text-align: center; }
-  .time-cell-label { font-size: 10px; color: var(--muted); }
-  .time-cell-val { font-size: 16px; font-weight: 700; margin-top: 3px; }
-  .cat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 14px; }
-  .cat-chip { background: var(--card2); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-  .cat-chip span { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cat-del { background: none; border: none; color: var(--c5); font-size: 15px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
-  .add-cat-row { display: flex; gap: 8px; }
-  .add-cat-row input { flex: 1; padding: 12px 13px; background: var(--card2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-size: 14px; outline: none; }
-  .add-cat-row input:focus { border-color: var(--c3); }
-  .add-cat-btn { padding: 12px 18px; background: var(--c3); color: #000; border: none; border-radius: 12px; font-size: 20px; font-weight: 700; cursor: pointer; }
-.scope-row { display:flex; gap:8px; margin-bottom:14px; }
-  .scope-btn { flex:1; padding:9px; border-radius:10px; border:1.5px solid var(--border); background:var(--card2); color:var(--muted); font-weight:700; font-size:13px; cursor:pointer; }
-  .scope-btn.on { border-color:var(--c3); color:var(--text); }
-  .cyc-card { background: var(--card); border-radius: 14px; padding: 13px 15px; margin-bottom: 8px; }
-  .cyc-top { display:flex; justify-content:space-between; font-size:13px; font-weight:700; }
-  .cyc-sub { font-size:11px; color:var(--muted); margin-top:3px; }
-  .imp-msg { font-size:13px; color:var(--muted); line-height:1.5; margin:10px 0; white-space:pre-line; }
-  .beta-pill { display:inline-block; background:var(--c3); color:#000; font-size:10px; font-weight:900; letter-spacing:1px; padding:3px 10px; border-radius:20px; margin-bottom:6px; }
-  .total-wrap { position:relative; margin-bottom:12px; }
-  .total-wrap span { position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:20px; font-weight:700; color:var(--muted); }
-  .total-in { width:100%; padding:13px 13px 13px 36px; font-size:24px; font-weight:800; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; -moz-appearance:textfield; }
-  .total-in::-webkit-outer-spin-button, .total-in::-webkit-inner-spin-button, .amt-in::-webkit-outer-spin-button, .amt-in::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-  .total-in:focus, .amt-in:focus { border-color:var(--c3); }
-  .item-row { display:flex; gap:6px; align-items:center; margin-bottom:8px; }
-  .cat-pick { flex:1; min-width:0; padding:12px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
-  .cat-pick.empty { color:var(--muted); border-style:dashed; }
-  .cat-pick:disabled { opacity:.5; }
-  .ns-name { outline:none; border-color:var(--c5); border-style:dashed; cursor:text; }
-  .ns-name::placeholder { color:var(--muted); }
-  .amt-in { width:84px; padding:12px 8px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-weight:700; outline:none; text-align:right; -moz-appearance:textfield; }
-  .amt-in.auto { color:var(--c3); border-style:dashed; }
-  .ns-btn, .rm-btn { width:40px; height:44px; flex-shrink:0; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; font-size:16px; cursor:pointer; color:var(--muted); }
-  .ns-btn { opacity:.4; }
-  .ns-btn.on { opacity:1; border-color:var(--c5); }
-  .alloc-bar { display:flex; height:8px; border-radius:4px; overflow:hidden; background:var(--border); margin:4px 0 6px; }
-  .alloc-txt { font-size:12px; color:var(--muted); margin-bottom:10px; min-height:16px; }
-  .alloc-txt.bad { color:var(--c5); font-weight:700; }
-  .row-tools { display:flex; gap:8px; margin-bottom:12px; }
-  .tool-btn { flex:1; padding:10px; background:none; border:1.5px dashed var(--border); border-radius:12px; color:var(--text); font-weight:700; font-size:13px; cursor:pointer; }
-  .btn-primary:disabled { opacity:.35; }
-  .pick-list { max-height:62vh; overflow-y:auto; }
-  .p-chip { width:100%; display:flex; justify-content:space-between; align-items:center; padding:14px; margin-bottom:8px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-weight:700; cursor:pointer; }
-  .p-chip.open { border-color:var(--c3); }
-  .k-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin:-2px 0 12px 10px; }
-  .k-chip { padding:11px 10px; background:var(--card); border:1.5px solid var(--border); border-radius:10px; color:var(--text); font-size:13px; text-align:left; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .k-chip.sel { border-color:var(--c3); color:var(--c3); }
-  .k-chip.new { border-style:dashed; color:var(--muted); }
-  .new-row { display:flex; gap:6px; grid-column:1 / -1; }
-  .new-row input { flex:1; min-width:0; padding:10px; background:var(--card2); border:1.5px solid var(--c3); border-radius:10px; color:var(--text); font-size:14px; outline:none; }
-  .new-row button { padding:0 14px; background:var(--c3); color:#000; border:none; border-radius:10px; font-weight:800; font-size:16px; }
-  .grp-card { background:var(--card); border-radius:14px; padding:12px 15px 4px; margin-bottom:8px; }
-  .grp-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
-  .grp-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px solid var(--border); cursor:pointer; }
-  .grp-item.ns { opacity:.45; cursor:default; }
-  .par-card { background:var(--card); border-radius:14px; padding:12px; margin-bottom:10px; }
-  .par-name { display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:15px; margin-bottom:10px; }
-  .par-card .cat-grid { margin-bottom:8px; }
-  .lock-val { padding:13px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--muted); font-size:16px; }
+  @font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-400-normal.woff2) format('woff2');font-weight:400;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF}
+  @font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-ext-400-normal.woff2) format('woff2');font-weight:400;unicode-range:U+0100-024F,U+20A0-20CF}
+  @font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-500-normal.woff2) format('woff2');font-weight:500 900;unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF}
+  @font-face{font-family:Plex;src:url(fonts/ibm-plex-mono-latin-ext-500-normal.woff2) format('woff2');font-weight:500 900;unicode-range:U+0100-024F,U+20A0-20CF}
+  @font-face{font-family:Grot;src:url(fonts/space-grotesk-latin-500-normal.woff2) format('woff2');font-weight:500}
+  @font-face{font-family:Grot;src:url(fonts/space-grotesk-latin-700-normal.woff2) format('woff2');font-weight:700}
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; border-radius:0 !important; }
+  :root { --bg:#0A0A0A; --card:#EDE8DC; --card2:#E2DCCC; --text:#1B1B1B; --muted:#6E6A60; --border:#B5AE9E;
+          --c1:#2F7D4A; --c2:#7A9A2E; --c3:#1B1B1B; --c4:#D9772B; --c5:#D7362B; --paper:#EDE8DC; }
+  body { background:var(--bg); color:var(--text); font-family:Plex,ui-monospace,monospace; min-height:100vh; font-variant-numeric:tabular-nums; }
+  button, input, select, textarea { font-family:inherit; }
+  .paper { background:var(--paper); color:var(--text); padding:18px 16px 30px; position:relative;
+    -webkit-mask:linear-gradient(-45deg,transparent 7px,#000 0) bottom/14px 14px repeat-x,linear-gradient(#000,#000) top/100% calc(100% - 7px) no-repeat;
+            mask:linear-gradient(-45deg,transparent 7px,#000 0) bottom/14px 14px repeat-x,linear-gradient(#000,#000) top/100% calc(100% - 7px) no-repeat; }
+  .rule { border-top:1px dashed var(--muted); margin:12px 0; }
+  .r-head { font-family:Grot,sans-serif; font-weight:700; font-size:18px; letter-spacing:3px; text-align:center; text-transform:uppercase; }
+  .r-sub { text-align:center; font-size:11px; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; }
+  .r-row { display:flex; justify-content:space-between; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  .lead { display:flex; align-items:baseline; gap:6px; font-size:13px; }
+  .lead .nm { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:62%; text-transform:uppercase; }
+  .lead .dots { flex:1; border-bottom:1px dotted var(--muted); transform:translateY(-4px); min-width:12px; }
+  .lead .am { white-space:nowrap; }
+  .lead.ns { color:var(--muted); }
+  .app, .settings-wrap { max-width:480px; margin:0 auto; padding:16px 14px 110px; }
+  .setup-wrap { max-width:480px; margin:0 auto; padding:20px 14px; min-height:100vh; display:flex; flex-direction:column; justify-content:center; }
+  .setup-hero { display:none; }
+  .setup-card { background:var(--paper); padding:22px 18px 30px; }
+  .setup-card h2 { font-family:Grot; font-size:16px; letter-spacing:2px; text-transform:uppercase; text-align:center; margin-bottom:16px; }
+  .inp-wrap { position:relative; }
+  .inp-wrap span { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:22px; color:var(--muted); }
+  .big-input { width:100%; padding:14px 14px 14px 40px; font-size:28px; font-weight:500; background:transparent; border:none; border-bottom:2px solid var(--text); color:var(--text); outline:none; -moz-appearance:textfield; }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .preview-box { margin-top:14px; display:none; } .preview-box.show { display:block; }
+  .per-q { text-align:center; font-size:12px; color:var(--muted); text-transform:uppercase; }
+  .per-q span { color:var(--text); }
+  .preview-quarters { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:10px; }
+  .pq-cell { border:1px dashed var(--muted); padding:8px 4px; text-align:center; }
+  .pq-cell .ql { font-size:11px; } .pq-cell .qd { font-size:10px; color:var(--muted); } .pq-cell .qa { font-size:13px; font-weight:500; margin-top:3px; }
+  .btn { padding:14px 20px; border:none; font-size:14px; font-weight:500; letter-spacing:2px; text-transform:uppercase; cursor:pointer; }
+  .btn-primary { background:var(--text); color:var(--paper); width:100%; margin-top:16px; }
+  .btn-primary:active { transform:translateY(1px); }
+  .btn-primary:disabled { opacity:.3; }
+  .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--bg); border-top:1px dashed #333; display:flex; z-index:50; padding-bottom:env(safe-area-inset-bottom); }
+  .nav-btn { flex:1; background:none; border:none; color:#77736A; font-size:13px; letter-spacing:3px; padding:18px 0; cursor:pointer; text-transform:uppercase; }
+  .nav-btn span { padding-bottom:4px; border-bottom:2px solid transparent; }
+  .nav-btn.active { color:var(--paper); } .nav-btn.active span { border-bottom-color:var(--paper); }
+  .big-amt { font-size:46px; font-weight:500; text-align:right; line-height:1.05; letter-spacing:-1px; margin-top:2px; }
+  .big-amt small { font-size:20px; margin-right:4px; }
+  .meter { display:grid; grid-template-columns:repeat(10,1fr); gap:3px; margin-top:10px; }
+  .meter i { height:12px; border:1px solid var(--text); }
+  .qline { display:flex; justify-content:space-between; font-size:12px; }
+  .qline b { font-weight:500; }
+  .plus-wrap { display:flex; flex-direction:column; align-items:center; margin-top:22px; gap:8px; }
+  .plus-ring { width:72px; height:72px; border:2px dashed #77736A; border-radius:50% !important; display:flex; align-items:center; justify-content:center; }
+  .plus-btn { width:56px; height:56px; border-radius:50% !important; background:var(--c5); border:none; color:var(--paper); font-size:30px; line-height:1; cursor:pointer; font-family:Grot; }
+  .plus-btn:active { transform:scale(.94); }
+  .plus-cap { font-size:11px; letter-spacing:3px; color:#77736A; }
+  .expired-banner { background:var(--paper); padding:18px 16px; text-align:center; margin-bottom:16px; border-top:3px solid var(--c5); }
+  .expired-banner h3 { color:var(--c5); font-size:14px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .expired-banner p { color:var(--muted); font-size:12px; }
+  .stamp { display:inline-block; border:2px solid var(--c5); color:var(--c5); padding:2px 8px; font-size:11px; letter-spacing:2px; transform:rotate(-4deg); font-weight:500; }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:100; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal { background:var(--paper); color:var(--text); padding:18px 18px calc(22px + env(safe-area-inset-bottom)); width:100%; max-width:480px; transform:translateY(40px); transition:transform .22s ease-out;
+    -webkit-mask:linear-gradient(135deg,transparent 7px,#000 0) top/14px 14px repeat-x,linear-gradient(#000,#000) bottom/100% calc(100% - 7px) no-repeat;
+            mask:linear-gradient(135deg,transparent 7px,#000 0) top/14px 14px repeat-x,linear-gradient(#000,#000) bottom/100% calc(100% - 7px) no-repeat; padding-top:24px; }
+  .modal-overlay.open .modal { transform:translateY(0); }
+  .modal-handle { display:none; }
+  .modal h3 { font-family:Grot; font-size:15px; letter-spacing:3px; text-transform:uppercase; text-align:center; margin-bottom:14px; }
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:11px; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:1px; }
+  .field input, .field select { width:100%; padding:11px 10px; background:transparent; border:1px solid var(--text); color:var(--text); font-size:15px; outline:none; }
+  .overflow-warning { border:1px dashed var(--c5); padding:8px 10px; font-size:12px; color:var(--c5); margin-bottom:12px; display:none; }
+  .overflow-warning.show { display:block; }
+  .settings-menu { }
+  .settings-row { display:flex; align-items:center; justify-content:space-between; padding:14px 2px; border-bottom:1px dashed var(--muted); cursor:pointer; }
+  .settings-row:last-child { border-bottom:none; }
+  .settings-row:active { background:var(--card2); }
+  .settings-row span { font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+  .settings-row .arr { color:var(--muted); }
+  .settings-row.danger span { color:var(--c5); }
+  .subpage { display:none; } .subpage.active { display:block; }
+  .back-btn { background:none; border:none; color:var(--text); font-size:12px; letter-spacing:2px; cursor:pointer; margin-bottom:14px; padding:0; text-transform:uppercase; }
+  .page-title { font-family:Grot; font-weight:700; font-size:18px; letter-spacing:3px; text-transform:uppercase; text-align:center; margin-bottom:4px; }
+  .hi-row { padding:9px 0; border-bottom:1px dashed var(--border); cursor:pointer; }
+  .hi-row .lead { font-size:13px; }
+  .hi-meta { font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:.5px; text-transform:uppercase; display:flex; justify-content:space-between; }
+  .del-btn { background:none; border:none; color:var(--muted); font-size:13px; cursor:pointer; padding:0 0 0 10px; font-family:inherit; }
+  .grp { padding:9px 0; border-bottom:1px dashed var(--border); }
+  .grp .sub { padding-left:12px; border-left:1px solid var(--border); margin:6px 0 4px 2px; }
+  .grp .sub .lead { font-size:12px; padding:3px 0; cursor:pointer; }
+  .empty-state { text-align:center; padding:40px 10px; color:var(--muted); font-size:12px; letter-spacing:1px; text-transform:uppercase; }
+  .empty-state .big { display:none; }
+  .section-title { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:2px; margin:18px 0 8px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; border-top:1px dashed var(--muted); }
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px dashed var(--muted); }
+  .stat-card { padding:12px 6px; text-align:left; border-bottom:1px dashed var(--muted); }
+  .stats-grid .stat-card:nth-child(odd) { border-right:1px dashed var(--muted); }
+  .stat-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+  .stat-value { font-size:20px; font-weight:500; }
+  .stat-sub { font-size:10px; color:var(--muted); margin-top:2px; text-transform:uppercase; }
+  .box { border:1px dashed var(--muted); padding:10px; margin-bottom:10px; }
+  .bar-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:12px; }
+  .bar-label { width:100px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-transform:uppercase; text-align:left; }
+  .bar-track { flex:1; height:10px; background:repeating-linear-gradient(90deg,var(--border) 0 1px,transparent 1px 6px); }
+  .bar-fill { height:100%; background:var(--text); }
+  .bar-val { font-size:11px; color:var(--muted); width:42px; text-align:right; flex-shrink:0; }
   .bar-row.click { cursor:pointer; }
-  .bar-row.kid .bar-label { padding-left:10px; color:var(--muted); }
-  .bar-label { width:100px; text-align:left; }
-  .field .total-in { padding:13px 13px 13px 36px; font-size:24px; font-weight:800; }
+  .bar-row.kid .bar-label { padding-left:12px; color:var(--muted); }
+  .bar-row.kid .bar-fill { background:var(--muted); }
+  .time-grid { display:grid; grid-template-columns:repeat(4,1fr); }
+  .time-cell { padding:8px 2px; text-align:center; border-right:1px dashed var(--border); }
+  .time-cell:last-child { border-right:none; }
+  .time-cell-label { font-size:10px; color:var(--muted); text-transform:uppercase; }
+  .time-cell-val { font-size:18px; font-weight:500; margin-top:3px; }
+  .scope-row { display:flex; margin:10px 0 4px; border:1px solid var(--text); }
+  .scope-btn { flex:1; padding:8px; background:transparent; border:none; color:var(--text); font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; }
+  .scope-btn.on { background:var(--text); color:var(--paper); }
+  .cyc-card { border-bottom:1px dashed var(--muted); padding:10px 0; }
+  .cyc-top { font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+  .cyc-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+  .cyc-line { display:flex; justify-content:space-between; font-size:12px; margin-top:4px; text-transform:uppercase; }
+  .imp-msg { font-size:12px; color:var(--muted); line-height:1.5; margin:10px 0; white-space:pre-line; }
+  .cat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-bottom:8px; }
+  .cat-chip { border:1px solid var(--text); padding:7px 8px; font-size:11px; display:flex; align-items:center; justify-content:space-between; gap:4px; text-transform:uppercase; }
+  .cat-chip span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cat-del { background:none; border:none; color:var(--c5); font-size:13px; cursor:pointer; padding:0 2px; flex-shrink:0; font-family:inherit; }
+  .add-cat-row { display:flex; gap:6px; }
+  .add-cat-row input { flex:1; min-width:0; padding:9px; background:transparent; border:1px dashed var(--text); color:var(--text); font-size:13px; outline:none; }
+  .add-cat-btn { padding:0 14px; background:var(--text); color:var(--paper); border:none; font-size:18px; cursor:pointer; }
+  .par-card { border-bottom:1px dashed var(--muted); padding:10px 0 12px; }
+  .par-name { display:flex; justify-content:space-between; align-items:center; font-family:Grot; font-weight:700; font-size:14px; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .total-wrap { position:relative; }
+  .total-wrap span { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--muted); }
+  .field .total-in { width:100%; padding:10px 10px 10px 34px; font-size:26px; font-weight:500; background:transparent; border:none; border-bottom:2px solid var(--text); color:var(--text); outline:none; caret-color:var(--c5); }
+  .item-row { display:flex; gap:5px; align-items:center; margin-bottom:6px; }
+  .cat-pick { flex:1; min-width:0; padding:10px 8px; background:transparent; border:1px solid var(--text); color:var(--text); font-size:12px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; text-transform:uppercase; letter-spacing:.5px; }
+  .cat-pick.empty { color:var(--muted); border-style:dashed; }
+  .ns-name { outline:none; border:1px dashed var(--c5); cursor:text; text-transform:none; }
+  .ns-name::placeholder { color:var(--muted); }
+  .amt-in { width:76px; padding:10px 6px; background:transparent; border:1px solid var(--text); color:var(--text); font-size:14px; outline:none; text-align:right; -moz-appearance:textfield; }
+  .amt-in.auto { border-style:dashed; color:var(--muted); }
+  .ns-btn, .rm-btn { width:36px; height:38px; flex-shrink:0; background:transparent; border:1px solid var(--border); font-size:12px; cursor:pointer; color:var(--muted); font-family:inherit; }
+  .ns-btn.on { border-color:var(--c5); color:var(--c5); background:#D7362B14; }
+  .alloc-bar { display:flex; height:8px; background:repeating-linear-gradient(90deg,var(--border) 0 1px,transparent 1px 5px); margin:4px 0 6px; }
+  .alloc-bar div { border-right:2px solid var(--paper); }
+  .alloc-txt { font-size:11px; color:var(--muted); margin-bottom:10px; min-height:15px; text-transform:uppercase; }
+  .alloc-txt.bad { color:var(--c5); }
+  .row-tools { display:flex; gap:6px; margin-bottom:10px; }
+  .tool-btn { flex:1; padding:9px; background:none; border:1px dashed var(--text); color:var(--text); font-size:11px; letter-spacing:2px; cursor:pointer; text-transform:uppercase; }
+  .pick-list { max-height:62vh; overflow-y:auto; }
+  .p-chip { width:100%; display:flex; justify-content:space-between; align-items:center; padding:12px 4px; background:none; border:none; border-bottom:1px dashed var(--muted); color:var(--text); font-family:Grot; font-weight:700; font-size:14px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; }
+  .p-chip.open { color:var(--c5); }
+  .k-grid { display:flex; flex-wrap:wrap; gap:6px; padding:10px 0 12px 8px; }
+  .k-chip { padding:8px 8px; background:none; border:none; color:var(--text); font-size:12px; cursor:pointer; text-transform:uppercase; white-space:nowrap; }
+  .k-chip::before { content:'[ '; color:var(--muted); } .k-chip::after { content:' ]'; color:var(--muted); }
+  .k-chip.sel { background:var(--text); color:var(--paper); }
+  .k-chip.new { color:var(--muted); }
+  .new-row { display:flex; gap:6px; width:100%; }
+  .new-row input { flex:1; min-width:0; padding:9px; background:transparent; border:1px solid var(--c5); color:var(--text); font-size:13px; outline:none; }
+  .new-row button { padding:0 14px; background:var(--text); color:var(--paper); border:none; font-size:15px; }
+  .lock-val { padding:11px 10px; border:1px dashed var(--muted); color:var(--muted); font-size:15px; }
 </style>
 </head>
 <body>
@@ -185,7 +187,9 @@
   <div class="setup-wrap">
     <div class="setup-hero"><div class="beta-pill">BETA</div><h1>Treat Track β</h1></div>
     <div class="setup-card">
-      <h2>28 Days Budget</h2>
+      <div class="r-head">Treat Track <span class="stamp">BETA</span></div>
+      <div class="rule"></div>
+      <h2>28 day budget</h2>
       <div class="inp-wrap">
         <span>₹</span>
         <input class="big-input" type="number" id="budgetInput" placeholder="0" min="1" oninput="previewBudget()">
@@ -200,92 +204,84 @@
       <h2 style="margin-bottom:8px">Test with your real data</h2>
       <div class="imp-msg" style="text-align:center;margin-top:0">Copies your main Treat Track data into this beta. The main app is only read, never changed.</div>
       <button class="btn btn-primary" style="margin-top:6px" onclick="copyFromMain()">Copy data from main app</button>
-      <button class="btn" style="width:100%;margin-top:10px;background:var(--card2);color:var(--text);border:1.5px solid var(--border)" onclick="exportData('main')">Back up main app data first</button>
+      <button class="btn" style="width:100%;margin-top:10px;background:transparent;color:var(--text);border:1px solid var(--text)" onclick="exportData('main')">Back up main app data first</button>
     </div>
   </div>
 </div>
 
 <div id="mainApp" style="display:none;">
   <div id="homeTab" class="app" style="display:none;">
-    <div class="home-date">
-      <div class="beta-pill">BETA</div>
-      <div class="d1" id="dateStr"></div>
-      <div class="d2" id="dateStr2"></div>
-    </div>
     <div id="expiredBanner" style="display:none;" class="expired-banner">
-      <h3>28-day period ended</h3>
-      <p>Your budget cycle is complete. Start a new one to keep tracking.</p>
-      <button class="btn btn-primary" style="margin-top:0;" onclick="startNewPeriod()">Start New Period</button>
+      <h3>28-day cycle ended</h3>
+      <p>Start a new cycle to keep tracking.</p>
+      <button class="btn btn-primary" onclick="startNewPeriod()">Start new cycle</button>
     </div>
     <div id="circleArea">
-      <div class="circle-wrap">
-        <div class="big-circle" id="bigCircle">
-          <div class="circle-q" id="circleQ"></div>
-          <div class="circle-dates" id="circleDates"></div>
-          <div class="circle-bal" id="circleBal"></div>
-          <button class="plus-btn" id="plusBtn" onclick="openLogModal()">+</button>
-        </div>
-        <div class="q-dots" id="qDots"></div>
+      <div class="paper" id="bigCircle">
+        <div class="r-head">Treat Track <span class="stamp">BETA</span></div>
+        <div class="r-sub" id="dateStr"></div>
+        <div class="rule"></div>
+        <div class="r-row"><span id="circleQ"></span><span id="circleDates"></span></div>
+        <div class="r-row" style="margin-top:14px;color:var(--muted)"><span id="balLabel">Left this quarter</span><span id="availLbl"></span></div>
+        <div class="big-amt" id="circleBal"></div>
+        <div class="meter" id="meter"></div>
+        <div class="rule"></div>
+        <div class="qline" id="qDots"></div>
+        <div class="rule"></div>
+        <div id="recent"></div>
       </div>
+      <div class="plus-wrap"><div class="plus-ring"><button class="plus-btn" id="plusBtn" onclick="openLogModal()" aria-label="Log a purchase">+</button></div><div class="plus-cap">LOG</div></div>
     </div>
   </div>
 
   <div id="settingsTab" style="display:none;">
-    <div class="settings-wrap">
+    <div class="settings-wrap"><div class="paper">
       <div id="settingsMain">
-        <div class="gear-icon">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M27.2 8.5a2 2 0 0 1 2-1.5h5.6a2 2 0 0 1 2 1.5l.8 3.3a18 18 0 0 1 4.4 2.5l3.3-.8a2 2 0 0 1 2.3 1l2.8 4.8a2 2 0 0 1-.5 2.6l-2.7 2a18 18 0 0 1 0 5l2.7 2a2 2 0 0 1 .5 2.6l-2.8 4.8a2 2 0 0 1-2.3 1l-3.3-.8a18 18 0 0 1-4.4 2.5l-.8 3.3a2 2 0 0 1-2 1.5h-5.6a2 2 0 0 1-2-1.5l-.8-3.3a18 18 0 0 1-4.4-2.5l-3.3.8a2 2 0 0 1-2.3-1l-2.8-4.8a2 2 0 0 1 .5-2.6l2.7-2a18 18 0 0 1 0-5l-2.7-2a2 2 0 0 1-.5-2.6l2.8-4.8a2 2 0 0 1 2.3-1l3.3.8a18 18 0 0 1 4.4-2.5l.8-3.3zM32 42a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" fill="#f7c948" opacity=".85"/>
-          </svg>
-        </div>
+        <div class="r-head">Settings</div>
+        <div class="r-sub">Treat Track β</div>
+        <div class="rule"></div>
         <div class="settings-menu">
           <div class="settings-row" onclick="showSubpage('stats')"><span>Stats</span><span class="arr">›</span></div>
           <div class="settings-row" onclick="showSubpage('history')"><span>History</span><span class="arr">›</span></div>
           <div class="settings-row" onclick="showSubpage('categories')"><span>Edit Categories</span><span class="arr">›</span></div>
           <div class="settings-row" onclick="showSubpage('import')"><span>Import CSV</span><span class="arr">›</span></div>
         </div>
-        <div class="section-title" style="margin-top:20px">Data</div>
+        <div class="section-title">Data</div>
         <div class="settings-menu">
           <div class="settings-row" onclick="exportData('main')"><span>Back up main app data</span><span class="arr">⤓</span></div>
           <div class="settings-row" onclick="exportData('beta')"><span>Back up beta data</span><span class="arr">⤓</span></div>
           <div class="settings-row" onclick="twoTap(this,'copy','replace beta data',copyFromMain)"><span>Re-copy data from main app</span><span class="arr">›</span></div>
           <div class="settings-row danger" onclick="twoTap(this,'reset','reset beta',resetApp)"><span>Reset beta</span><span class="arr">›</span></div>
         </div>
-        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β3 · splits + category tree + carry display · main app data is read-only here</div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β4 · thermal receipt · main app data is read-only here</div>
       </div>
-      <div id="subStats" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">Stats</div><div id="statsContent"></div></div>
-      <div id="subHistory" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">History</div><div id="historyList"></div></div>
+      <div id="subStats" class="subpage"><button class="back-btn" onclick="showSubpage(null)">&lt; Settings</button><div class="page-title">Stats</div><div id="statsContent"></div></div>
+      <div id="subHistory" class="subpage"><button class="back-btn" onclick="showSubpage(null)">&lt; Settings</button><div class="page-title">History</div><div id="historyList"></div></div>
       <div id="subImport" class="subpage">
-        <button class="back-btn" onclick="showSubpage(null)">‹ Settings</button>
+        <button class="back-btn" onclick="showSubpage(null)">&lt; Settings</button>
         <div class="page-title">Import CSV</div>
         <div class="imp-msg">Replaces ALL app data with the cycles and purchases in the file. The cycle containing today becomes the active one; earlier cycles go to Past Cycles.</div>
         <input type="file" id="importFile" onchange="readImport(event)" style="display:none">
         <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">Choose file</button>
         <div class="imp-msg" style="margin-top:14px">Or paste the CSV text here:</div>
-        <textarea id="importText" rows="6" style="width:100%;background:var(--card2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:12px;" placeholder="type,cycle,start,budget,date,time,category,amount"></textarea>
-        <button class="btn" style="background:var(--card2);color:var(--text);border:1.5px solid var(--border)" onclick="checkImport(document.getElementById('importText').value)">Check pasted text</button>
+        <textarea id="importText" rows="6" style="width:100%;background:transparent;color:var(--text);border:1px dashed var(--text);padding:8px;font-size:12px;" placeholder="type,cycle,start,budget,date,time,category,amount"></textarea>
+        <button class="btn" style="width:100%;margin-top:8px;background:transparent;color:var(--text);border:1px solid var(--text)" onclick="checkImport(document.getElementById('importText').value)">Check pasted text</button>
         <div class="imp-msg" id="importSummary"></div>
         <button class="btn btn-primary" id="importBtn" style="display:none" onclick="applyImport()">Replace data with import</button>
       </div>
       <div id="subCategories" class="subpage">
-        <button class="back-btn" onclick="showSubpage(null)">‹ Settings</button>
+        <button class="back-btn" onclick="showSubpage(null)">&lt; Settings</button>
         <div class="page-title">Edit Categories</div>
         <div id="catGrid"></div>
         <div class="section-title">New parent</div>
-        <div class="add-cat-row"><input type="text" id="newParInput" placeholder="e.g. 🍜 Meals"><button class="add-cat-btn" onclick="addParentFromGrid()">+</button></div>
+        <div class="add-cat-row"><input type="text" id="newParInput" placeholder="e.g. Meals"><button class="add-cat-btn" onclick="addParentFromGrid()">+</button></div>
       </div>
-    </div>
+    </div></div>
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-btn active" id="nav-home" onclick="showTab('home')">
-      <div class="nav-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="currentColor" stroke-width="2"/><text x="13" y="18" text-anchor="middle" font-size="14" font-weight="900" fill="currentColor">+</text></svg></div>
-      Home
-    </button>
-    <button class="nav-btn" id="nav-settings" onclick="showTab('settings')">
-      <div class="nav-icon"><svg width="26" height="26" viewBox="0 0 64 64" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M27.2 8.5a2 2 0 0 1 2-1.5h5.6a2 2 0 0 1 2 1.5l.8 3.3a18 18 0 0 1 4.4 2.5l3.3-.8a2 2 0 0 1 2.3 1l2.8 4.8a2 2 0 0 1-.5 2.6l-2.7 2a18 18 0 0 1 0 5l2.7 2a2 2 0 0 1 .5 2.6l-2.8 4.8a2 2 0 0 1-2.3 1l-3.3-.8a18 18 0 0 1-4.4 2.5l-.8 3.3a2 2 0 0 1-2 1.5h-5.6a2 2 0 0 1-2-1.5l-.8-3.3a18 18 0 0 1-4.4-2.5l-3.3.8a2 2 0 0 1-2.3-1l-2.8-4.8a2 2 0 0 1 .5-2.6l2.7-2a18 18 0 0 1 0-5l-2.7-2a2 2 0 0 1-.5-2.6l2.8-4.8a2 2 0 0 1 2.3-1l3.3.8a18 18 0 0 1 4.4-2.5l.8-3.3zM32 42a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" fill="currentColor"/></svg></div>
-      Settings
-    </button>
+    <button class="nav-btn active" id="nav-home" onclick="showTab('home')"><span>Home</span></button>
+    <button class="nav-btn" id="nav-settings" onclick="showTab('settings')"><span>Settings</span></button>
   </nav>
 
   <div class="modal-overlay" id="modalLog" onclick="closeModalOutside(event,'modalLog')">
@@ -348,13 +344,14 @@ const DEFAULT_TREE=[
   {name:'🍪 Bakery',  kids:['🍪 Cookies','🧁 Pastries','🫓 Biscuits','🍘 Crackers']},
   {name:MISC,         kids:['🍱 Other']}
 ];
-const SPLIT_COLS=['#f7c948','#4ade80','#60a5fa','#c084fc','#fb923c','#f472b6'];
+const SPLIT_COLS=['#1B1B1B','#6E6A60','#2F7D4A','#C9A227','#3E5C76','#D9772B'];
 
 let state = { budget:0, qBudget:0, quarters:[{b:0,s:0},{b:0,s:0},{b:0,s:0},{b:0,s:0}], snacks:[], startDate:null, cats:[], history:[], tree:null };
 
 const ico=c=>(c||'').split(' ')[0];
-const lbl=c=>(c||'').split(' ').slice(1).join(' ')||c;
+const lbl=c=>{ c=c||''; const t=c.split(' '); return (t.length>1&&/\p{Extended_Pictographic}/u.test(t[0]))?t.slice(1).join(' '):c; };
 const r2=x=>Math.round(x*100)/100;
+const rs=v=>(v<0?'−':'')+'₹'+Math.abs(v).toFixed(0);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const hasEmoji=s=>/\p{Extended_Pictographic}/u.test(s.split(' ')[0]);
 
@@ -406,11 +403,11 @@ else if (localStorage.getItem(MAIN_KEY)) document.getElementById('copyMainBox').
 
 // 5-step colour scale: 100%→green, 80%→yellow-green, 60%→yellow, 40%→orange, 20%→red, 0/neg→red
 function getColor(pct) {
-  if (pct > 80) return '#4ade80';
-  if (pct > 60) return '#a3e635';
-  if (pct > 40) return '#f7c948';
-  if (pct > 20) return '#fb923c';
-  return '#ff6b6b';
+  if (pct > 80) return '#2F7D4A';
+  if (pct > 60) return '#7A9A2E';
+  if (pct > 40) return '#C9A227';
+  if (pct > 20) return '#D9772B';
+  return '#D7362B';
 }
 function qColorCode(q, idx, cq) {
   if (idx > cq) return { color:'future', hex: 'var(--border)' };
@@ -478,27 +475,33 @@ function showSubpage(page) {
 
 function renderHome() {
   const now=new Date();
-  document.getElementById('dateStr').textContent=now.toLocaleDateString('en-IN',{weekday:'long'});
-  document.getElementById('dateStr2').textContent=now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dateStr').textContent=now.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
   const expired=isExpired();
   document.getElementById('expiredBanner').style.display=expired?'block':'none';
   document.getElementById('circleArea').style.display=expired?'none':'block';
   if(expired) return;
   const cq=getCurrentQ(); const q=state.quarters[cq];
-  const pct = Math.max(0, (q.b / state.qBudget) * 100);
-  const hex = q.b<0 ? '#ff6b6b' : getColor(pct);
-  const circle = document.getElementById('bigCircle');
-  circle.style.borderColor = hex; circle.style.boxShadow = `0 0 48px ${hex}30`;
-  document.getElementById('circleQ').textContent = `Quarter ${cq+1}`;
-  document.getElementById('circleDates').textContent = `${fmtDate(getQStart(cq))} – ${fmtDate(getQEnd(cq))}`;
-  const balEl = document.getElementById('circleBal'); balEl.textContent = `₹${q.b.toFixed(2)}`; balEl.style.color = hex;
-  document.getElementById('plusBtn').style.background = hex;
-  const others=[0,1,2,3].filter(i=>i!==cq);
-  document.getElementById('qDots').innerHTML=others.map(i=>{
-    const {color, hex:dHex} = qColorCode(state.quarters[i],i,cq);
-    if(color==='future'||color==='done') return `<div class="q-dot ${color}">Q${i+1}</div>`;
-    return `<div class="q-dot" style="border-color:${dHex};color:${dHex};background:${dHex}22">Q${i+1}</div>`;
+  const avail=q.b+q.s; const carry=avail-state.qBudget;
+  const hex=q.b<0?'#D7362B':getColor(Math.max(0,q.b/state.qBudget*100));
+  document.getElementById('circleQ').textContent=`Quarter ${cq+1}`;
+  document.getElementById('circleDates').textContent=`${fmtDate(getQStart(cq))} – ${fmtDate(getQEnd(cq))}`;
+  document.getElementById('balLabel').textContent=q.b<0?'Over this quarter':'Left this quarter';
+  document.getElementById('availLbl').textContent=`of ₹${avail.toFixed(0)}`;
+  const bal=document.getElementById('circleBal'); bal.innerHTML=`<small>₹</small>${q.b.toFixed(2)}`; bal.style.color=q.b<0?'#D7362B':'var(--text)';
+  const used=avail>0?Math.min(1,q.s/avail):1; const n=q.b<0?10:Math.round(used*10);
+  document.getElementById('meter').innerHTML=Array.from({length:10},(_,i)=>`<i style="${i<n?`background:${hex};border-color:${hex}`:''}"></i>`).join('');
+  document.getElementById('qDots').innerHTML=[0,1,2,3].map(i=>{
+    const m=i<cq?(state.quarters[i].b<0?'✗':'✓'):(i===cq?'●':'○');
+    return `<span style="${i===cq?'':'color:var(--muted)'}">Q${i+1} <b style="${i<cq&&state.quarters[i].b<0?'color:#D7362B':''}">${m}</b></span>`;
   }).join('');
+  const items=state.snacks.filter(s=>s.quarter===cq);
+  let h=items.length?items.slice(0,6).map(s=>`<div class="lead"><span class="nm">${esc(lbl(s.cat))}</span><span class="dots"></span><span class="am">${s.price.toFixed(2)}</span></div>`).join('')
+       +(items.length>6?`<div class="r-sub" style="text-align:left;margin-top:4px">+ ${items.length-6} more</div>`:'')
+       :`<div class="r-sub">No purchases this quarter</div>`;
+  h+=`<div class="rule"></div>`;
+  if(carry<0) h+=`<div class="lead" style="color:#D7362B"><span class="nm">Carried in</span><span class="dots"></span><span class="am">${carry.toFixed(2)}</span></div>`;
+  h+=`<div class="lead" style="font-weight:500"><span class="nm">Spent</span><span class="dots"></span><span class="am">₹${q.s.toFixed(2)}</span></div>`;
+  document.getElementById('recent').innerHTML=h;
 }
 
 // ---------- Log modal: total + split rows ----------
@@ -520,12 +523,12 @@ function closeModalOutside(e,id) { if(e.target===document.getElementById(id)) cl
 function renderRows() {
   const n=rows.length;
   document.getElementById('rows').innerHTML=rows.map((r,i)=>{
-    const catBtn=r.ns?`<input class="cat-pick ns-name" placeholder="🚫 Name, e.g. Pen" value="${esc(r.name||'')}" oninput="rows[${i}].name=this.value">`
-      :`<button class="cat-pick ${r.cat?'':'empty'}" onclick="openPicker(${i})">${r.cat?esc(r.cat):'Pick category ›'}</button>`;
+    const catBtn=r.ns?`<input class="cat-pick ns-name" placeholder="Not a snack: name" value="${esc(r.name||'')}" oninput="rows[${i}].name=this.value">`
+      :`<button class="cat-pick ${r.cat?'':'empty'}" onclick="openPicker(${i})">${r.cat?esc(lbl(r.cat)):'Pick category >'}</button>`;
     let amt='';
     if(n>1) amt=i<n-1?`<input class="amt-in" type="number" inputmode="decimal" step="0.5" value="${r.amt||''}" placeholder="₹" oninput="rows[${i}].amt=parseFloat(this.value)||0;updateAlloc()">`
                      :`<input class="amt-in auto" id="lastAmt" readonly tabindex="-1">`;
-    const ns=n>1?`<button class="ns-btn ${r.ns?'on':''}" onclick="toggleNS(${i})" title="Not a snack">🚫</button>`:'';
+    const ns=n>1?`<button class="ns-btn ${r.ns?'on':''}" onclick="toggleNS(${i})" title="Not a snack">N/S</button>`:'';
     const rm=n>1?`<button class="rm-btn" onclick="removeRow(${i})">✕</button>`:'';
     return `<div class="item-row">${catBtn}${amt}${ns}${rm}</div>`;
   }).join('');
@@ -575,7 +578,7 @@ function logSnack() {
     state.snacks.unshift(rec);
   });
   recalcAll(); save();
-  const btn=document.getElementById('addBtn'); btn.textContent='✅'; btn.style.background='#4ade80';
+  const btn=document.getElementById('addBtn'); btn.textContent='✅'; btn.style.background='#2F7D4A';
   setTimeout(()=>{ btn.textContent='Add'; btn.style.background=''; closeModal('modalLog'); renderHome(); },800);
 }
 
@@ -590,20 +593,20 @@ function renderPicker() {
   const cur=pickTarget==='edit'?editCat:(rows[pickTarget]||{}).cat;
   document.getElementById('pickList').innerHTML=state.tree.map((p,pi)=>{
     const open=openParent===p.name;
-    let h=`<button class="p-chip ${open?'open':''}" onclick="toggleParent(${pi})"><span>${esc(p.name)}</span><span style="color:var(--muted)">${p.kids.length} ${open?'▾':'›'}</span></button>`;
+    let h=`<button class="p-chip ${open?'open':''}" onclick="toggleParent(${pi})"><span>${esc(lbl(p.name))}</span><span style="color:var(--muted);font-family:Plex;font-size:12px">${p.kids.length} ${open?'v':'>'}</span></button>`;
     if(open){
-      h+=`<div class="k-grid">`+p.kids.map((k,ki)=>`<button class="k-chip ${k===cur?'sel':''}" onclick="pickKid(${pi},${ki})">${esc(k)}</button>`).join('');
-      h+=addingKid===pi?`<div class="new-row"><input id="newKid" placeholder="e.g. 🍩 Donut" onkeydown="if(event.key==='Enter')addKid(${pi})"><button onclick="addKid(${pi})">✓</button></div>`
+      h+=`<div class="k-grid">`+p.kids.map((k,ki)=>`<button class="k-chip ${k===cur?'sel':''}" onclick="pickKid(${pi},${ki})">${esc(lbl(k))}</button>`).join('');
+      h+=addingKid===pi?`<div class="new-row"><input id="newKid" placeholder="e.g. Donut" onkeydown="if(event.key==='Enter')addKid(${pi})"><button onclick="addKid(${pi})">✓</button></div>`
                        :`<button class="k-chip new" onclick="addingKid=${pi};renderPicker();setTimeout(()=>document.getElementById('newKid').focus(),50)">＋ New</button>`;
       h+=`</div>`;
     }
     return h;
-  }).join('')+(addingParent?`<div class="new-row" style="margin-top:4px"><input id="newPar" placeholder="e.g. 🍜 Meals" onkeydown="if(event.key==='Enter')addParent()"><button onclick="addParent()">✓</button></div>`
+  }).join('')+(addingParent?`<div class="new-row" style="margin-top:4px"><input id="newPar" placeholder="e.g. Meals" onkeydown="if(event.key==='Enter')addParent()"><button onclick="addParent()">✓</button></div>`
                           :`<button class="p-chip" style="border-style:dashed;color:var(--muted)" onclick="addingParent=true;renderPicker();setTimeout(()=>document.getElementById('newPar').focus(),50)"><span>＋ New parent</span></button>`);
 }
 function toggleParent(pi){ const n=state.tree[pi].name; openParent=openParent===n?null:n; addingKid=null; renderPicker(); }
 function choose(cat){
-  if(pickTarget==='edit'){ editCat=cat; document.getElementById('editCatBtn').textContent=cat; }
+  if(pickTarget==='edit'){ editCat=cat; document.getElementById('editCatBtn').textContent=lbl(cat); }
   else { rows[pickTarget].cat=cat; renderRows(); }
   closeModal('modalPick');
 }
@@ -629,7 +632,7 @@ function toLocalInput(d) { const p=n=>String(n).padStart(2,'0'); return `${d.get
 function openEditModal(id) {
   const s=state.snacks.find(x=>x.id===id); if(!s) return;
   editingId=id; editCat=s.cat;
-  document.getElementById('editCatBtn').textContent=s.cat;
+  document.getElementById('editCatBtn').textContent=lbl(s.cat);
   document.getElementById('editPrice').textContent='₹'+s.price.toFixed(2);
   document.getElementById('editGroupNote').style.display=s.gid?'block':'none';
   const ti=document.getElementById('editTime'); ti.value=toLocalInput(new Date(s.time));
@@ -658,9 +661,9 @@ function deleteSnack(id) {
 // ---------- Edit Categories ----------
 function renderCatGrid() {
   document.getElementById('catGrid').innerHTML=state.tree.map((p,pi)=>`<div class="par-card">
-    <div class="par-name"><span>${esc(p.name)}</span>${p.name===MISC?'':`<button class="cat-del" onclick="deleteParent(${pi})" title="Delete parent (children move to Misc)">✕</button>`}</div>
-    <div class="cat-grid">${p.kids.map((k,ki)=>`<div class="cat-chip"><span>${esc(k)}</span><button class="cat-del" onclick="deleteKid(${pi},${ki})">✕</button></div>`).join('')}</div>
-    <div class="add-cat-row"><input type="text" id="nk${pi}" placeholder="New in ${esc(lbl(p.name))}"><button class="add-cat-btn" onclick="addKidFromGrid(${pi})">+</button></div></div>`).join('');
+    <div class="par-name"><span>${esc(lbl(p.name))}</span>${p.name===MISC?'':`<button class="cat-del" onclick="deleteParent(${pi})" title="Delete parent (children move to Misc)">✕</button>`}</div>
+    <div class="cat-grid">${p.kids.map((k,ki)=>`<div class="cat-chip"><span>${esc(lbl(k))}</span><button class="cat-del" onclick="deleteKid(${pi},${ki})">✕</button></div>`).join('')}</div>
+    <div class="add-cat-row"><input type="text" id="nk${pi}" placeholder="New in ${esc(lbl(p.name)).toLowerCase()}"><button class="add-cat-btn" onclick="addKidFromGrid(${pi})">+</button></div></div>`).join('');
 }
 function addKidFromGrid(pi){
   let v=document.getElementById('nk'+pi).value.trim(); if(!v) return;
@@ -679,26 +682,25 @@ function deleteKid(pi,ki){ state.tree[pi].kids.splice(ki,1); save(); renderCatGr
 function deleteParent(pi){ const p=state.tree[pi]; if(p.name===MISC) return; state.tree.find(x=>x.name===MISC).kids.push(...p.kids); state.tree.splice(pi,1); save(); renderCatGrid(); }
 
 // ---------- History (splits grouped) ----------
-function itemLine(s,cls){
-  return `<div class="${cls}" onclick="openEditModal(${s.id})"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">${ico(s.cat)}</div><div style="min-width:0"><div class="hi-name">${esc(lbl(s.cat))}</div><div class="hi-meta">${esc(lbl(parentOf(s.cat)))}</div></div></div><div style="display:flex;align-items:center;"><div class="hi-price">₹${s.price.toFixed(2)}</div><button class="del-btn" onclick="event.stopPropagation();deleteSnack(${s.id})">🗑️</button></div></div>`;
-}
+function leadLine(s,extra=''){ return `<div class="lead" ${extra}><span class="nm">${esc(lbl(s.cat))}</span><span class="dots"></span><span class="am">${s.price.toFixed(2)}</span><button class="del-btn" onclick="event.stopPropagation();deleteSnack(${s.id})" aria-label="Delete">✕</button></div>`; }
 function renderHistory() {
   const el=document.getElementById('historyList');
-  if(!state.snacks.length){ el.innerHTML=`<div class="empty-state"><div class="big">📋</div><p>Nothing yet.</p></div>`; return; }
-  const seen=new Set(); let html='';
+  if(!state.snacks.length){ el.innerHTML=`<div class="rule"></div><div class="empty-state">Nothing logged yet</div>`; return; }
+  const seen=new Set(); let html='<div class="rule"></div>';
   state.snacks.forEach(s=>{
-    const d=new Date(s.time); const ts=fmtDate(d)+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    const d=new Date(s.time); const ts=fmtDate(d)+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
     if(!s.gid){
-      html+=`<div class="history-item" style="cursor:pointer" onclick="openEditModal(${s.id})"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">${ico(s.cat)}</div><div style="min-width:0"><div class="hi-name">${esc(lbl(s.cat))}</div><div class="hi-meta">${esc(lbl(parentOf(s.cat)))} · Q${s.quarter+1} · ${ts}</div></div></div><div style="display:flex;align-items:center;"><div class="hi-price">₹${s.price.toFixed(2)}</div><button class="del-btn" onclick="event.stopPropagation();deleteSnack(${s.id})">🗑️</button></div></div>`;
+      html+=`<div class="hi-row" onclick="openEditModal(${s.id})">${leadLine(s)}<div class="hi-meta"><span>${esc(lbl(parentOf(s.cat)))}</span><span>Q${s.quarter+1} · ${ts}</span></div></div>`;
       return;
     }
     if(seen.has(s.gid)) return; seen.add(s.gid);
     const items=state.snacks.filter(x=>x.gid===s.gid); const gx=s.gx||0;
     const tot=items.reduce((a,x)=>a+x.price,0)+gx;
-    html+=`<div class="grp-card"><div class="grp-head"><div><div class="hi-name">🧾 Split purchase</div><div class="hi-meta">Q${s.quarter+1} · ${ts}</div></div><div class="hi-price" style="color:var(--text)">₹${tot.toFixed(2)}</div></div>`
-      +items.map(x=>itemLine(x,'grp-item')).join('')
-      +(s.gxi&&s.gxi.length?s.gxi:(gx>0?[{n:'Not a snack',a:gx}]:[])).map(x=>`<div class="grp-item ns"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">🚫</div><div style="min-width:0"><div class="hi-name">${esc(x.n)}</div><div class="hi-meta">Not a snack</div></div></div><div class="hi-price" style="color:var(--muted);padding-right:31px">₹${x.a.toFixed(2)}</div></div>`).join('')
-      +`</div>`;
+    const ns=(s.gxi&&s.gxi.length?s.gxi:(gx>0?[{n:'Not a snack',a:gx}]:[]));
+    html+=`<div class="grp"><div class="lead" style="font-weight:500"><span class="nm">Split purchase</span><span class="dots"></span><span class="am">₹${tot.toFixed(2)}</span><span style="width:23px"></span></div>
+      <div class="sub">${items.map(x=>leadLine(x,`onclick="openEditModal(${x.id})"`)).join('')}
+      ${ns.map(x=>`<div class="lead ns"><span class="nm">${esc(x.n)} (not snack)</span><span class="dots"></span><span class="am">${x.a.toFixed(2)}</span><span style="width:23px"></span></div>`).join('')}</div>
+      <div class="hi-meta"><span>${items.length} item${items.length>1?'s':''}${ns.length?` + ${ns.length} other`:''}</span><span>Q${s.quarter+1} · ${ts}</span></div></div>`;
   });
   el.innerHTML=html;
 }
@@ -709,22 +711,22 @@ function setScope(s){ statsScope=s; renderStats(); }
 function toggleStatParent(name){ statsOpen.has(name)?statsOpen.delete(name):statsOpen.add(name); renderStats(); }
 function renderPastCycles() {
   if(!state.history.length) return '';
-  return `<div class="section-title">Past Cycles</div>`+[...state.history].reverse().map(c=>{
+  return `<div class="section-title">Past cycles</div>`+[...state.history].reverse().map(c=>{
     const st=new Date(c.startDate); const en=new Date(st); en.setDate(en.getDate()+27);
-    const spent=c.snacks.reduce((a,x)=>a+x.price,0); const left=c.budget+(c.carryIn||0)-spent;
+    const spent=c.snacks.reduce((a,x)=>a+x.price,0); const cin=c.carryIn||0; const left=c.budget+cin-spent;
     const out=Math.min(0,c.quarters[3].b);
-    return `<div class="cyc-card"><div class="cyc-top"><span>${fmtDate(st)} – ${fmtDate(en)}</span></div>
-      <div class="cyc-sub" style="display:flex;justify-content:space-between;margin-top:6px"><span>Net balance this cycle</span><b style="color:${left<0?'#ff6b6b':'#4ade80'}">₹${left.toFixed(0)}</b></div>
-      <div class="cyc-sub" style="display:flex;justify-content:space-between"><span>Carried to next cycle</span><b style="color:${out<0?'#ff6b6b':'var(--text)'}">₹${out.toFixed(0)}</b></div>
-      <div class="cyc-sub">Budget ₹${c.budget.toFixed(0)}${c.carryIn?` · Carried ₹${c.carryIn.toFixed(0)}`:''} · Spent ₹${spent.toFixed(0)} · ${c.snacks.length} purchases</div>
-      <div class="cyc-sub">${c.quarters.map((q,i)=>`Q${i+1} ₹${q.s.toFixed(0)}`).join(' · ')}</div></div>`;
+    return `<div class="cyc-card"><div class="cyc-top">${fmtDate(st)} – ${fmtDate(en)}</div>
+      <div class="cyc-sub">Budget ₹${c.budget.toFixed(0)}${cin?` · Carried in ${rs(cin)}`:''} · Spent ₹${spent.toFixed(0)} · ${c.snacks.length} purchases</div>
+      <div class="cyc-sub">${c.quarters.map((q,i)=>`Q${i+1} ₹${q.s.toFixed(0)}`).join(' · ')}</div>
+      ${out<0?`<div class="cyc-line"><span>Carried to next cycle</span><b style="color:#D7362B">${rs(out)}</b></div>`:''}
+      <div class="cyc-line"><span>Net balance</span><b style="color:${left<0?'#D7362B':'#2F7D4A'}">${rs(left)}</b></div></div>`;
   }).join('');
 }
 function renderStats() {
   const all=statsScope==='all';
   const snacks=all?state.history.flatMap(c=>c.snacks).concat(state.snacks):state.snacks;
   const toggle=`<div class="scope-row"><button class="scope-btn ${all?'':'on'}" onclick="setScope('cycle')">This cycle</button><button class="scope-btn ${all?'on':''}" onclick="setScope('all')">All time</button></div>`;
-  if(!snacks.length){document.getElementById('statsContent').innerHTML=toggle+`<div class="empty-state"><div class="big">📊</div><p>Log some snacks first.</p></div>`+(all?renderPastCycles():'');return;}
+  if(!snacks.length){document.getElementById('statsContent').innerHTML=toggle+`<div class="empty-state">Log some snacks first</div>`+(all?renderPastCycles():'');return;}
   const total=snacks.reduce((a,s)=>a+s.price,0); const avg=total/snacks.length;
   const priceMap={}; snacks.forEach(s=>{const k=s.price.toFixed(2);priceMap[k]=(priceMap[k]||0)+1;});
   const commonP=Object.entries(priceMap).sort((a,b)=>b[1]-a[1])[0];
@@ -737,8 +739,8 @@ function renderStats() {
   const maxP=sortedP[0][1].n;
   const catBars=sortedP.map(([p,v])=>{
     const open=statsOpen.has(p);
-    let h=`<div class="bar-row click" onclick="toggleStatParent('${esc(p).replace(/'/g,"\\'")}')"><div class="bar-label">${esc(p)}</div><div class="bar-track"><div class="bar-fill" style="width:${v.n/maxP*100}%;background:#f7c948"></div></div><div class="bar-val">${v.n}x</div></div>`;
-    if(open) h+=Object.entries(v.kids).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<div class="bar-row kid"><div class="bar-label">${esc(k)}</div><div class="bar-track"><div class="bar-fill" style="width:${n/v.n*100}%;background:#f7c94888"></div></div><div class="bar-val">${n}x</div></div>`).join('');
+    let h=`<div class="bar-row click" onclick="toggleStatParent('${esc(p).replace(/'/g,"\\'")}')"><div class="bar-label">${esc(lbl(p))} ${open?'v':'>'}</div><div class="bar-track"><div class="bar-fill" style="width:${v.n/maxP*100}%"></div></div><div class="bar-val">${v.n}x</div></div>`;
+    if(open) h+=Object.entries(v.kids).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<div class="bar-row kid"><div class="bar-label">${esc(lbl(k))}</div><div class="bar-track"><div class="bar-fill" style="width:${n/v.n*100}%"></div></div><div class="bar-val">${n}x</div></div>`).join('');
     return h;
   }).join('');
   document.getElementById('statsContent').innerHTML=toggle+`
@@ -747,15 +749,15 @@ function renderStats() {
       <div class="stat-card"><div class="stat-label">Avg per Item</div><div class="stat-value">₹${avg.toFixed(0)}</div></div>
       <div class="stat-card"><div class="stat-label">Common Price</div><div class="stat-value">₹${commonP[0]}</div><div class="stat-sub">${commonP[1]}× bought</div></div>
       <div class="stat-card"><div class="stat-label">Peak Time</div><div class="stat-value" style="font-size:15px">${peakTime}</div><div class="stat-sub">${tb[peakTime]} items</div></div>
-      ${all?`<div class="stat-card"><div class="stat-label">Cycles</div><div class="stat-value">${state.history.length+(state.budget>0?1:0)}</div><div class="stat-sub">incl. current</div></div>`:`<div class="stat-card"><div class="stat-label">Budget Left</div><div class="stat-value" style="color:${state.budget+(state.carryIn||0)-total<0?'#ff6b6b':'#4ade80'}">₹${(state.budget+(state.carryIn||0)-total).toFixed(0)}</div><div class="stat-sub">of ₹${state.budget}${state.carryIn?` (₹${state.carryIn.toFixed(0)} carried)`:''}</div></div>`}
-      <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:14px">${ico(sortedP[0][0])}</div><div class="stat-sub">${esc(lbl(sortedP[0][0]))}</div></div>
+      ${all?`<div class="stat-card"><div class="stat-label">Cycles</div><div class="stat-value">${state.history.length+(state.budget>0?1:0)}</div><div class="stat-sub">incl. current</div></div>`:`<div class="stat-card"><div class="stat-label">Budget Left</div><div class="stat-value" style="color:${state.budget+(state.carryIn||0)-total<0?'#D7362B':'#2F7D4A'}">₹${(state.budget+(state.carryIn||0)-total).toFixed(0)}</div><div class="stat-sub">of ₹${state.budget}${state.carryIn?` (₹${state.carryIn.toFixed(0)} carried)`:''}</div></div>`}
+      <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:15px;text-transform:uppercase">${esc(lbl(sortedP[0][0]))}</div><div class="stat-sub">${sortedP[0][1].n} items</div></div>
     </div>
     <div class="section-title">Time of Day</div>
-    <div class="stat-card" style="margin-bottom:12px;"><div class="time-grid">${Object.entries(tb).map(([k,v])=>`<div class="time-cell"><div class="time-cell-label">${k}</div><div class="time-cell-val" style="color:${v===Math.max(...Object.values(tb))?'#f7c948':'var(--text)'}">${v}</div></div>`).join('')}</div></div>
-    <div class="section-title">Categories · tap to expand</div>
-    <div class="stat-card" style="margin-bottom:12px;">${catBars}</div>
+    <div class="box"><div class="time-grid">${Object.entries(tb).map(([k,v])=>`<div class="time-cell"><div class="time-cell-label">${k}</div><div class="time-cell-val" style="color:${v===Math.max(...Object.values(tb))?'#D7362B':'var(--text)'}">${v}</div></div>`).join('')}</div></div>
+    <div class="section-title">Categories</div>
+    <div class="box">${catBars}</div>
     ${all?'':`<div class="section-title">Quarter Spending</div>
-    <div class="stat-card">${qSpend.map((v,i)=>{const pct=Math.max(0,(1-v/state.qBudget)*100);const c=getColor(pct);return `<div class="bar-row"><div class="bar-label">Q${i+1}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,v/state.qBudget*100)}%;background:${c}"></div></div><div class="bar-val">₹${v.toFixed(0)}</div></div>`;}).join('')}</div>`}`+(all?renderPastCycles():'');
+    <div class="box">${qSpend.map((v,i)=>{const pct=Math.max(0,(1-v/state.qBudget)*100);const c=getColor(pct);return `<div class="bar-row"><div class="bar-label">Q${i+1}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,v/state.qBudget*100)}%;background:${c}"></div></div><div class="bar-val">₹${v.toFixed(0)}</div></div>`;}).join('')}</div>`}`+(all?renderPastCycles():'');
 }
 
 // ---- CSV import ----
