@@ -142,6 +142,8 @@
   .cat-pick { flex:1; min-width:0; padding:12px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
   .cat-pick.empty { color:var(--muted); border-style:dashed; }
   .cat-pick:disabled { opacity:.5; }
+  .ns-name { outline:none; border-color:var(--c5); border-style:dashed; cursor:text; }
+  .ns-name::placeholder { color:var(--muted); }
   .amt-in { width:84px; padding:12px 8px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-weight:700; outline:none; text-align:right; -moz-appearance:textfield; }
   .amt-in.auto { color:var(--c3); border-style:dashed; }
   .ns-btn, .rm-btn { width:40px; height:44px; flex-shrink:0; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; font-size:16px; cursor:pointer; color:var(--muted); }
@@ -249,7 +251,7 @@
           <div class="settings-row" onclick="twoTap(this,'copy','replace beta data',copyFromMain)"><span>Re-copy data from main app</span><span class="arr">›</span></div>
           <div class="settings-row danger" onclick="twoTap(this,'reset','reset beta',resetApp)"><span>Reset beta</span><span class="arr">›</span></div>
         </div>
-        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β2 · splits + category tree + carry display · main app data is read-only here</div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β3 · splits + category tree + carry display · main app data is read-only here</div>
       </div>
       <div id="subStats" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">Stats</div><div id="statsContent"></div></div>
       <div id="subHistory" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">History</div><div id="historyList"></div></div>
@@ -518,7 +520,7 @@ function closeModalOutside(e,id) { if(e.target===document.getElementById(id)) cl
 function renderRows() {
   const n=rows.length;
   document.getElementById('rows').innerHTML=rows.map((r,i)=>{
-    const catBtn=r.ns?`<button class="cat-pick" disabled>🚫 Not a snack</button>`
+    const catBtn=r.ns?`<input class="cat-pick ns-name" placeholder="🚫 Name, e.g. Pen" value="${esc(r.name||'')}" oninput="rows[${i}].name=this.value">`
       :`<button class="cat-pick ${r.cat?'':'empty'}" onclick="openPicker(${i})">${r.cat?esc(r.cat):'Pick category ›'}</button>`;
     let amt='';
     if(n>1) amt=i<n-1?`<input class="amt-in" type="number" inputmode="decimal" step="0.5" value="${r.amt||''}" placeholder="₹" oninput="rows[${i}].amt=parseFloat(this.value)||0;updateAlloc()">`
@@ -569,7 +571,7 @@ function logSnack() {
   const grouped=rows.length>1;
   [...snackRows].reverse().forEach((r,k)=>{
     const rec={id:base+k,price:r2(r.amt),cat:r.cat,quarter:cq,time:now.toISOString(),hour:now.getHours()};
-    if(grouped){ rec.gid=base; rec.gx=extra; }
+    if(grouped){ rec.gid=base; rec.gx=extra; rec.gxi=rows.filter(r=>r.ns).map(r=>({n:(r.name||'').trim()||'Not a snack',a:r2(r.amt)})); }
     state.snacks.unshift(rec);
   });
   recalcAll(); save();
@@ -695,7 +697,7 @@ function renderHistory() {
     const tot=items.reduce((a,x)=>a+x.price,0)+gx;
     html+=`<div class="grp-card"><div class="grp-head"><div><div class="hi-name">🧾 Split purchase</div><div class="hi-meta">Q${s.quarter+1} · ${ts}</div></div><div class="hi-price" style="color:var(--text)">₹${tot.toFixed(2)}</div></div>`
       +items.map(x=>itemLine(x,'grp-item')).join('')
-      +(gx>0?`<div class="grp-item ns"><div style="display:flex;align-items:center;gap:12px"><div class="hi-icon">🚫</div><div class="hi-name">Not a snack</div></div><div class="hi-price" style="color:var(--muted);padding-right:31px">₹${gx.toFixed(2)}</div></div>`:'')
+      +(s.gxi&&s.gxi.length?s.gxi:(gx>0?[{n:'Not a snack',a:gx}]:[])).map(x=>`<div class="grp-item ns"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">🚫</div><div style="min-width:0"><div class="hi-name">${esc(x.n)}</div><div class="hi-meta">Not a snack</div></div></div><div class="hi-price" style="color:var(--muted);padding-right:31px">₹${x.a.toFixed(2)}</div></div>`).join('')
       +`</div>`;
   });
   el.innerHTML=html;
