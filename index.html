@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Treat Track β</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treat Track β">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js');
+    });
+  }
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0f0f13; --card: #1a1a24; --card2: #22222f;
+    --text: #f0f0f0; --muted: #777; --border: #2a2a3a;
+    --c1: #4ade80; --c2: #a3e635; --c3: #f7c948; --c4: #fb923c; --c5: #ff6b6b;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+  .app { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+  .setup-wrap { max-width: 480px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+  .setup-hero { text-align: center; padding-bottom: 32px; }
+  .setup-hero h1 { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+  .setup-card { background: var(--card); border-radius: 22px; padding: 28px 22px; }
+  .setup-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+  .inp-wrap { position: relative; }
+  .inp-wrap span { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 22px; font-weight: 700; color: var(--muted); }
+  .big-input { width: 100%; padding: 16px 16px 16px 42px; font-size: 28px; font-weight: 800; background: var(--card2); border: 2px solid var(--border); border-radius: 14px; color: var(--text); outline: none; -moz-appearance: textfield; }
+  .big-input::-webkit-outer-spin-button, .big-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .big-input:focus { border-color: var(--c3); }
+  .preview-box { margin-top: 14px; display: none; }
+  .preview-box.show { display: block; }
+  .per-q { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .per-q span { color: var(--text); font-weight: 700; }
+  .preview-quarters { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
+  .pq-cell { background: var(--card2); border-radius: 10px; padding: 10px 6px; text-align: center; }
+  .pq-cell .ql { font-size: 11px; color: var(--muted); font-weight: 700; }
+  .pq-cell .qd { font-size: 10px; color: var(--muted); margin-top: 3px; }
+  .pq-cell .qa { font-size: 14px; font-weight: 800; margin-top: 4px; }
+  .btn { padding: 15px 24px; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: var(--c3); color: #000; width: 100%; margin-top: 18px; }
+  .btn-primary:active { opacity: .85; transform: scale(.98); }
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); z-index: 50; }
+  .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; padding: 6px 40px; transition: color .2s; }
+  .nav-icon { font-size: 24px; line-height: 1; }
+  .nav-btn.active { color: var(--c3); }
+  .home-date { text-align: center; margin-bottom: 28px; }
+  .home-date .d1 { font-size: 13px; color: var(--muted); }
+  .home-date .d2 { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  .circle-wrap { display: flex; flex-direction: column; align-items: center; }
+  .big-circle { width: 280px; height: 280px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 5px solid; transition: border-color .5s, box-shadow .5s; }
+  .circle-q     { font-size: 12px; color: var(--muted); font-weight: 700; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 4px; text-align: center; }
+  .circle-dates { font-size: 12px; color: var(--muted); margin-bottom: 14px; text-align: center; }
+  .circle-bal   { font-size: 40px; font-weight: 900; letter-spacing: -1px; line-height: 1; text-align: center; transition: color .5s; }
+  .plus-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--c3); border: none; font-size: 28px; color: #000; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; margin-top: 18px; }
+  .plus-btn:active { transform: scale(.92); }
+  .q-dots { display: flex; gap: 14px; margin-top: 24px; align-items: center; }
+  .q-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
+  .q-dot.future { border-color: var(--border); color: var(--muted); background: transparent; }
+  .q-dot.done   { border-color: var(--border); color: var(--muted); background: var(--border); }
+  .expired-banner { background: rgba(255,107,107,.1); border: 1px solid var(--c5); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 24px; }
+  .expired-banner h3 { color: var(--c5); font-size: 16px; margin-bottom: 8px; }
+  .expired-banner p { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--card); border-radius: 24px 24px 0 0; padding: 20px 20px calc(24px + env(safe-area-inset-bottom)); width: 100%; max-width: 480px; transform: translateY(60px); transition: transform .28s; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 18px; }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+  .field input, .field select { width: 100%; padding: 13px; background: var(--card2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; outline: none; -moz-appearance: textfield; }
+  .field input::-webkit-outer-spin-button, .field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .field input:focus, .field select:focus { border-color: var(--c3); }
+  .overflow-warning { background: rgba(255,107,107,.12); border: 1px solid var(--c5); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--c5); margin-bottom: 12px; display: none; }
+  .overflow-warning.show { display: block; }
+  .settings-wrap { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+  .gear-icon { display: flex; align-items: center; justify-content: center; margin-bottom: 28px; margin-top: 8px; }
+  .settings-menu { background: var(--card); border-radius: 18px; overflow: hidden; }
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:active { background: var(--card2); }
+  .settings-row span { font-size: 15px; font-weight: 600; }
+  .settings-row .arr { color: var(--muted); font-size: 18px; }
+  .settings-row.danger span { color: var(--c5); }
+  .subpage { display: none; }
+  .subpage.active { display: block; }
+  .back-btn { background: none; border: none; color: var(--c3); font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 6px; padding: 0; }
+  .history-item { background: var(--card); border-radius: 14px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .hi-icon { font-size: 20px; width: 38px; height: 38px; background: var(--card2); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .hi-name { font-weight: 600; font-size: 14px; }
+  .hi-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .hi-price { font-weight: 800; font-size: 15px; color: var(--c3); }
+  .del-btn { background: none; border: none; color: var(--muted); font-size: 17px; cursor: pointer; padding: 4px 4px 4px 10px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-state .big { font-size: 44px; margin-bottom: 12px; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin: 16px 0 9px; }
+  .page-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .stat-card { background: var(--card); border-radius: 14px; padding: 15px; text-align: center; }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 5px; }
+  .stat-value { font-size: 20px; font-weight: 800; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .bar-label { font-size: 12px; width: 72px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { flex: 1; height: 7px; background: var(--border); border-radius: 4px; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-val { font-size: 11px; color: var(--muted); width: 30px; text-align: right; flex-shrink: 0; }
+  .time-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+  .time-cell { background: var(--card2); border-radius: 10px; padding: 10px 4px; text-align: center; }
+  .time-cell-label { font-size: 10px; color: var(--muted); }
+  .time-cell-val { font-size: 16px; font-weight: 700; margin-top: 3px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 14px; }
+  .cat-chip { background: var(--card2); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .cat-chip span { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cat-del { background: none; border: none; color: var(--c5); font-size: 15px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
+  .add-cat-row { display: flex; gap: 8px; }
+  .add-cat-row input { flex: 1; padding: 12px 13px; background: var(--card2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-size: 14px; outline: none; }
+  .add-cat-row input:focus { border-color: var(--c3); }
+  .add-cat-btn { padding: 12px 18px; background: var(--c3); color: #000; border: none; border-radius: 12px; font-size: 20px; font-weight: 700; cursor: pointer; }
+.scope-row { display:flex; gap:8px; margin-bottom:14px; }
+  .scope-btn { flex:1; padding:9px; border-radius:10px; border:1.5px solid var(--border); background:var(--card2); color:var(--muted); font-weight:700; font-size:13px; cursor:pointer; }
+  .scope-btn.on { border-color:var(--c3); color:var(--text); }
+  .cyc-card { background: var(--card); border-radius: 14px; padding: 13px 15px; margin-bottom: 8px; }
+  .cyc-top { display:flex; justify-content:space-between; font-size:13px; font-weight:700; }
+  .cyc-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+  .imp-msg { font-size:13px; color:var(--muted); line-height:1.5; margin:10px 0; white-space:pre-line; }
+  .beta-pill { display:inline-block; background:var(--c3); color:#000; font-size:10px; font-weight:900; letter-spacing:1px; padding:3px 10px; border-radius:20px; margin-bottom:6px; }
+  .total-wrap { position:relative; margin-bottom:12px; }
+  .total-wrap span { position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:20px; font-weight:700; color:var(--muted); }
+  .total-in { width:100%; padding:13px 13px 13px 36px; font-size:24px; font-weight:800; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); outline:none; -moz-appearance:textfield; }
+  .total-in::-webkit-outer-spin-button, .total-in::-webkit-inner-spin-button, .amt-in::-webkit-outer-spin-button, .amt-in::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .total-in:focus, .amt-in:focus { border-color:var(--c3); }
+  .item-row { display:flex; gap:6px; align-items:center; margin-bottom:8px; }
+  .cat-pick { flex:1; min-width:0; padding:12px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+  .cat-pick.empty { color:var(--muted); border-style:dashed; }
+  .cat-pick:disabled { opacity:.5; }
+  .amt-in { width:84px; padding:12px 8px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-weight:700; outline:none; text-align:right; -moz-appearance:textfield; }
+  .amt-in.auto { color:var(--c3); border-style:dashed; }
+  .ns-btn, .rm-btn { width:40px; height:44px; flex-shrink:0; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; font-size:16px; cursor:pointer; color:var(--muted); }
+  .ns-btn { opacity:.4; }
+  .ns-btn.on { opacity:1; border-color:var(--c5); }
+  .alloc-bar { display:flex; height:8px; border-radius:4px; overflow:hidden; background:var(--border); margin:4px 0 6px; }
+  .alloc-txt { font-size:12px; color:var(--muted); margin-bottom:10px; min-height:16px; }
+  .alloc-txt.bad { color:var(--c5); font-weight:700; }
+  .row-tools { display:flex; gap:8px; margin-bottom:12px; }
+  .tool-btn { flex:1; padding:10px; background:none; border:1.5px dashed var(--border); border-radius:12px; color:var(--text); font-weight:700; font-size:13px; cursor:pointer; }
+  .btn-primary:disabled { opacity:.35; }
+  .pick-list { max-height:62vh; overflow-y:auto; }
+  .p-chip { width:100%; display:flex; justify-content:space-between; align-items:center; padding:14px; margin-bottom:8px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-weight:700; cursor:pointer; }
+  .p-chip.open { border-color:var(--c3); }
+  .k-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin:-2px 0 12px 10px; }
+  .k-chip { padding:11px 10px; background:var(--card); border:1.5px solid var(--border); border-radius:10px; color:var(--text); font-size:13px; text-align:left; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .k-chip.sel { border-color:var(--c3); color:var(--c3); }
+  .k-chip.new { border-style:dashed; color:var(--muted); }
+  .new-row { display:flex; gap:6px; grid-column:1 / -1; }
+  .new-row input { flex:1; min-width:0; padding:10px; background:var(--card2); border:1.5px solid var(--c3); border-radius:10px; color:var(--text); font-size:14px; outline:none; }
+  .new-row button { padding:0 14px; background:var(--c3); color:#000; border:none; border-radius:10px; font-weight:800; font-size:16px; }
+  .grp-card { background:var(--card); border-radius:14px; padding:12px 15px 4px; margin-bottom:8px; }
+  .grp-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .grp-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px solid var(--border); cursor:pointer; }
+  .grp-item.ns { opacity:.45; cursor:default; }
+  .par-card { background:var(--card); border-radius:14px; padding:12px; margin-bottom:10px; }
+  .par-name { display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:15px; margin-bottom:10px; }
+  .par-card .cat-grid { margin-bottom:8px; }
+  .lock-val { padding:13px; background:var(--card2); border:1.5px solid var(--border); border-radius:12px; color:var(--muted); font-size:16px; }
+  .bar-row.click { cursor:pointer; }
+  .bar-row.kid .bar-label { padding-left:10px; color:var(--muted); }
+  .bar-label { width:100px; text-align:left; }
+  .field .total-in { padding:13px 13px 13px 36px; font-size:24px; font-weight:800; }
+</style>
+</head>
+<body>
+
+<div id="setupScreen">
+  <div class="setup-wrap">
+    <div class="setup-hero"><div class="beta-pill">BETA</div><h1>Treat Track β</h1></div>
+    <div class="setup-card">
+      <h2>28 Days Budget</h2>
+      <div class="inp-wrap">
+        <span>₹</span>
+        <input class="big-input" type="number" id="budgetInput" placeholder="0" min="1" oninput="previewBudget()">
+      </div>
+      <div class="preview-box" id="previewBox">
+        <div class="per-q">₹<span id="perQ">0</span> per week</div>
+        <div class="preview-quarters" id="previewQuarters"></div>
+      </div>
+      <button class="btn btn-primary" onclick="startBudget()">Start</button>
+    </div>
+    <div class="setup-card" id="copyMainBox" style="display:none;margin-top:14px">
+      <h2 style="margin-bottom:8px">Test with your real data</h2>
+      <div class="imp-msg" style="text-align:center;margin-top:0">Copies your main Treat Track data into this beta. The main app is only read, never changed.</div>
+      <button class="btn btn-primary" style="margin-top:6px" onclick="copyFromMain()">Copy data from main app</button>
+      <button class="btn" style="width:100%;margin-top:10px;background:var(--card2);color:var(--text);border:1.5px solid var(--border)" onclick="exportData('main')">Back up main app data first</button>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none;">
+  <div id="homeTab" class="app" style="display:none;">
+    <div class="home-date">
+      <div class="beta-pill">BETA</div>
+      <div class="d1" id="dateStr"></div>
+      <div class="d2" id="dateStr2"></div>
+    </div>
+    <div id="expiredBanner" style="display:none;" class="expired-banner">
+      <h3>28-day period ended</h3>
+      <p>Your budget cycle is complete. Start a new one to keep tracking.</p>
+      <button class="btn btn-primary" style="margin-top:0;" onclick="startNewPeriod()">Start New Period</button>
+    </div>
+    <div id="circleArea">
+      <div class="circle-wrap">
+        <div class="big-circle" id="bigCircle">
+          <div class="circle-q" id="circleQ"></div>
+          <div class="circle-dates" id="circleDates"></div>
+          <div class="circle-bal" id="circleBal"></div>
+          <button class="plus-btn" id="plusBtn" onclick="openLogModal()">+</button>
+        </div>
+        <div class="q-dots" id="qDots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsTab" style="display:none;">
+    <div class="settings-wrap">
+      <div id="settingsMain">
+        <div class="gear-icon">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M27.2 8.5a2 2 0 0 1 2-1.5h5.6a2 2 0 0 1 2 1.5l.8 3.3a18 18 0 0 1 4.4 2.5l3.3-.8a2 2 0 0 1 2.3 1l2.8 4.8a2 2 0 0 1-.5 2.6l-2.7 2a18 18 0 0 1 0 5l2.7 2a2 2 0 0 1 .5 2.6l-2.8 4.8a2 2 0 0 1-2.3 1l-3.3-.8a18 18 0 0 1-4.4 2.5l-.8 3.3a2 2 0 0 1-2 1.5h-5.6a2 2 0 0 1-2-1.5l-.8-3.3a18 18 0 0 1-4.4-2.5l-3.3.8a2 2 0 0 1-2.3-1l-2.8-4.8a2 2 0 0 1 .5-2.6l2.7-2a18 18 0 0 1 0-5l-2.7-2a2 2 0 0 1-.5-2.6l2.8-4.8a2 2 0 0 1 2.3-1l3.3.8a18 18 0 0 1 4.4-2.5l.8-3.3zM32 42a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" fill="#f7c948" opacity=".85"/>
+          </svg>
+        </div>
+        <div class="settings-menu">
+          <div class="settings-row" onclick="showSubpage('stats')"><span>Stats</span><span class="arr">›</span></div>
+          <div class="settings-row" onclick="showSubpage('history')"><span>History</span><span class="arr">›</span></div>
+          <div class="settings-row" onclick="showSubpage('categories')"><span>Edit Categories</span><span class="arr">›</span></div>
+          <div class="settings-row" onclick="showSubpage('import')"><span>Import CSV</span><span class="arr">›</span></div>
+        </div>
+        <div class="section-title" style="margin-top:20px">Data</div>
+        <div class="settings-menu">
+          <div class="settings-row" onclick="exportData('main')"><span>Back up main app data</span><span class="arr">⤓</span></div>
+          <div class="settings-row" onclick="exportData('beta')"><span>Back up beta data</span><span class="arr">⤓</span></div>
+          <div class="settings-row" onclick="twoTap(this,'copy','replace beta data',copyFromMain)"><span>Re-copy data from main app</span><span class="arr">›</span></div>
+          <div class="settings-row danger" onclick="twoTap(this,'reset','reset beta',resetApp)"><span>Reset beta</span><span class="arr">›</span></div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β1 · splits + category tree · main app data is read-only here</div>
+      </div>
+      <div id="subStats" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">Stats</div><div id="statsContent"></div></div>
+      <div id="subHistory" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">History</div><div id="historyList"></div></div>
+      <div id="subImport" class="subpage">
+        <button class="back-btn" onclick="showSubpage(null)">‹ Settings</button>
+        <div class="page-title">Import CSV</div>
+        <div class="imp-msg">Replaces ALL app data with the cycles and purchases in the file. The cycle containing today becomes the active one; earlier cycles go to Past Cycles.</div>
+        <input type="file" id="importFile" onchange="readImport(event)" style="display:none">
+        <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">Choose file</button>
+        <div class="imp-msg" style="margin-top:14px">Or paste the CSV text here:</div>
+        <textarea id="importText" rows="6" style="width:100%;background:var(--card2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:12px;" placeholder="type,cycle,start,budget,date,time,category,amount"></textarea>
+        <button class="btn" style="background:var(--card2);color:var(--text);border:1.5px solid var(--border)" onclick="checkImport(document.getElementById('importText').value)">Check pasted text</button>
+        <div class="imp-msg" id="importSummary"></div>
+        <button class="btn btn-primary" id="importBtn" style="display:none" onclick="applyImport()">Replace data with import</button>
+      </div>
+      <div id="subCategories" class="subpage">
+        <button class="back-btn" onclick="showSubpage(null)">‹ Settings</button>
+        <div class="page-title">Edit Categories</div>
+        <div id="catGrid"></div>
+        <div class="section-title">New parent</div>
+        <div class="add-cat-row"><input type="text" id="newParInput" placeholder="e.g. 🍜 Meals"><button class="add-cat-btn" onclick="addParentFromGrid()">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="showTab('home')">
+      <div class="nav-icon"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="12" stroke="currentColor" stroke-width="2"/><text x="13" y="18" text-anchor="middle" font-size="14" font-weight="900" fill="currentColor">+</text></svg></div>
+      Home
+    </button>
+    <button class="nav-btn" id="nav-settings" onclick="showTab('settings')">
+      <div class="nav-icon"><svg width="26" height="26" viewBox="0 0 64 64" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M27.2 8.5a2 2 0 0 1 2-1.5h5.6a2 2 0 0 1 2 1.5l.8 3.3a18 18 0 0 1 4.4 2.5l3.3-.8a2 2 0 0 1 2.3 1l2.8 4.8a2 2 0 0 1-.5 2.6l-2.7 2a18 18 0 0 1 0 5l2.7 2a2 2 0 0 1 .5 2.6l-2.8 4.8a2 2 0 0 1-2.3 1l-3.3-.8a18 18 0 0 1-4.4 2.5l-.8 3.3a2 2 0 0 1-2 1.5h-5.6a2 2 0 0 1-2-1.5l-.8-3.3a18 18 0 0 1-4.4-2.5l-3.3.8a2 2 0 0 1-2.3-1l-2.8-4.8a2 2 0 0 1 .5-2.6l2.7-2a18 18 0 0 1 0-5l-2.7-2a2 2 0 0 1-.5-2.6l2.8-4.8a2 2 0 0 1 2.3-1l3.3.8a18 18 0 0 1 4.4-2.5l.8-3.3zM32 42a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" fill="currentColor"/></svg></div>
+      Settings
+    </button>
+  </nav>
+
+  <div class="modal-overlay" id="modalLog" onclick="closeModalOutside(event,'modalLog')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h3>Log a Purchase</h3>
+      <div class="overflow-warning" id="overflowWarning"></div>
+      <div class="field"><label>Total paid (₹)</label>
+        <div class="total-wrap"><span>₹</span><input class="total-in" type="number" inputmode="decimal" id="snackTotal" placeholder="0" min="0" step="0.5" oninput="updateAlloc()"></div></div>
+      <div class="field" style="margin-bottom:4px"><label>Items</label></div>
+      <div id="rows"></div>
+      <div class="alloc-bar" id="allocBar"></div>
+      <div class="alloc-txt" id="allocTxt"></div>
+      <div class="row-tools">
+        <button class="tool-btn" onclick="addRow()">＋ Split</button>
+        <button class="tool-btn" id="equalBtn" onclick="equalSplit()">÷ Equal</button>
+      </div>
+      <button class="btn btn-primary" id="addBtn" style="margin-top:0" onclick="logSnack()">Add</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalPick" style="z-index:110" onclick="closeModalOutside(event,'modalPick')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h3>Category</h3>
+      <div class="pick-list" id="pickList"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalEdit" onclick="closeModalOutside(event,'modalEdit')">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <h3>Edit Item</h3>
+      <div class="field"><label>Category</label><button class="cat-pick" style="width:100%" id="editCatBtn" onclick="openPicker('edit')"></button></div>
+      <div class="field"><label>Price (locked)</label><div class="lock-val" id="editPrice"></div></div>
+      <div class="field"><label>Date &amp; Time</label><input type="datetime-local" id="editTime"></div>
+      <div class="imp-msg" id="editGroupNote" style="margin-top:0">Time change applies to every item in this split purchase.</div>
+      <button class="btn btn-primary" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== BETA BUILD =====================
+// Storage: this build reads/writes ONLY 'treattrack_beta'.
+// The main app's key 'treattrack_v3' is only ever READ here (copy + backup), never written or removed.
+const KEY='treattrack_beta';
+const MAIN_KEY='treattrack_v3';
+// Hard guard: this build can never write to or delete the main app's data.
+(()=>{ const S=Storage.prototype, set=S.setItem, rem=S.removeItem, clr=S.clear;
+  S.setItem=function(k,v){ if(k===MAIN_KEY) throw new Error('beta: main data is read-only'); return set.call(this,k,v); };
+  S.removeItem=function(k){ if(k===MAIN_KEY) throw new Error('beta: main data is read-only'); return rem.call(this,k); };
+  S.clear=function(){ throw new Error('beta: clear() disabled'); }; })();
+const MISC='🍱 Misc';
+const DEFAULT_TREE=[
+  {name:'🥤 Drinks',  kids:['☕ Coffee','🍵 Tea','🥤 Soft Drinks','🧋 Milkshake','🧃 Juice']},
+  {name:'🍟 Crunchy', kids:['🍟 Chips','🍿 Popcorn','🥜 Nuts & Seeds']},
+  {name:'🥪 Savoury', kids:['🥪 Savory Snacks','🥪 Sandwich','🌯 Roll','🥐 Puff']},
+  {name:'🍫 Sweets',  kids:['🍫 Chocolate','🍬 Candy','🍦 Ice Cream']},
+  {name:'🍪 Bakery',  kids:['🍪 Cookies','🧁 Pastries','🫓 Biscuits','🍘 Crackers']},
+  {name:MISC,         kids:['🍱 Other']}
+];
+const SPLIT_COLS=['#f7c948','#4ade80','#60a5fa','#c084fc','#fb923c','#f472b6'];
+
+let state = { budget:0, qBudget:0, quarters:[{b:0,s:0},{b:0,s:0},{b:0,s:0},{b:0,s:0}], snacks:[], startDate:null, cats:[], history:[], tree:null };
+
+const ico=c=>(c||'').split(' ')[0];
+const lbl=c=>(c||'').split(' ').slice(1).join(' ')||c;
+const r2=x=>Math.round(x*100)/100;
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const hasEmoji=s=>/\p{Extended_Pictographic}/u.test(s.split(' ')[0]);
+
+// Old records keep their original 'cat' string. The tree only maps cat -> parent,
+// so no purchase record is ever rewritten by the category change.
+function syncCats(){ state.cats=state.tree.flatMap(p=>p.kids); }
+function ensureTree(){
+  if(!state.tree) state.tree=JSON.parse(JSON.stringify(DEFAULT_TREE));
+  let misc=state.tree.find(p=>p.name===MISC); if(!misc){ misc={name:MISC,kids:[]}; state.tree.push(misc); }
+  const known=new Set(state.tree.flatMap(p=>p.kids));
+  const used=[...(state.cats||[]), ...state.snacks.map(s=>s.cat), ...state.history.flatMap(c=>c.snacks.map(s=>s.cat))];
+  used.forEach(c=>{ if(c&&!known.has(c)){ misc.kids.push(c); known.add(c); } });
+  syncCats();
+}
+function parentOf(cat){ const p=state.tree.find(p=>p.kids.includes(cat)); return p?p.name:MISC; }
+
+function save() { syncCats(); localStorage.setItem(KEY, JSON.stringify(state)); }
+function load() { try { const d=localStorage.getItem(KEY); if(d){ state=JSON.parse(d); if(!state.history) state.history=[]; ensureTree(); recalcAll(); } else { state.tree=JSON.parse(JSON.stringify(DEFAULT_TREE)); syncCats(); } } catch(e){ state.tree=JSON.parse(JSON.stringify(DEFAULT_TREE)); syncCats(); } }
+
+// Two-tap confirm (confirm() is unreliable in some contexts)
+const armed={};
+function twoTap(el,key,label,fn){
+  if(armed[key]){ clearTimeout(armed[key]); delete armed[key]; fn(); return; }
+  const old=el.innerHTML; el.innerHTML=`<span style="color:var(--c5)">Tap again: ${label}</span>`;
+  armed[key]=setTimeout(()=>{ delete armed[key]; el.innerHTML=old; },3000);
+}
+function resetApp() { localStorage.removeItem(KEY); location.reload(); }
+
+function copyFromMain() {
+  const raw=localStorage.getItem(MAIN_KEY);
+  if(!raw){ alert('No main Treat Track data found on this phone/browser.'); return; }
+  try { const tree=state.tree; state=JSON.parse(raw); if(!state.history) state.history=[]; state.tree=tree; ensureTree(); recalcAll(); save(); }
+  catch(e){ alert('Could not read main app data.'); return; }
+  document.getElementById('setupScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; showTab('home');
+}
+async function exportData(which) {
+  const raw=localStorage.getItem(which==='main'?MAIN_KEY:KEY);
+  if(!raw){ alert('No '+(which==='main'?'main app':'beta')+' data found.'); return; }
+  const d=new Date(); const p=n=>String(n).padStart(2,'0');
+  const name=`treattrack-${which}-backup-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`;
+  const file=new File([raw],name,{type:'application/json'});
+  try { if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:name}); return; } } catch(e){ if(e.name==='AbortError') return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(file); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+
+load();
+if (state.budget > 0) { document.getElementById('setupScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; showTab('home'); }
+else if (localStorage.getItem(MAIN_KEY)) document.getElementById('copyMainBox').style.display='block';
+
+// 5-step colour scale: 100%→green, 80%→yellow-green, 60%→yellow, 40%→orange, 20%→red, 0/neg→red
+function getColor(pct) {
+  if (pct > 80) return '#4ade80';
+  if (pct > 60) return '#a3e635';
+  if (pct > 40) return '#f7c948';
+  if (pct > 20) return '#fb923c';
+  return '#ff6b6b';
+}
+function qColorCode(q, idx, cq) {
+  if (idx > cq) return { color:'future', hex: 'var(--border)' };
+  if (idx < cq) return { color:'done',   hex: 'var(--border)' };
+  const pct = Math.max(0, (q.b / state.qBudget) * 100);
+  return { color:'active', hex: getColor(pct) };
+}
+
+function nextMonday() { const d=new Date(); d.setHours(0,0,0,0); const day=d.getDay(); const diff=day===1?0:(8-day)%7||7; d.setDate(d.getDate()+diff); return d; }
+function getQStart(i) { const s=new Date(state.startDate); s.setDate(s.getDate()+i*7); return s; }
+function getQEnd(i)   { const e=getQStart(i); e.setDate(e.getDate()+6); return e; }
+function fmtDate(d)   { return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+function isExpired()  { if(!state.startDate) return false; const end=new Date(state.startDate); end.setDate(end.getDate()+28); return Date.now()>=end.getTime(); }
+function getCurrentQ(){ if(!state.startDate) return 0; const start=new Date(state.startDate); start.setHours(0,0,0,0); const elapsed=Math.floor((Date.now()-start)/86400000); return Math.min(3,Math.max(0,Math.floor(elapsed/7))); }
+
+function previewBudget() {
+  const v=parseFloat(document.getElementById('budgetInput').value); const box=document.getElementById('previewBox');
+  if(!v||v<=0){box.classList.remove('show');return;}
+  document.getElementById('perQ').textContent=(v/4).toFixed(2);
+  const monday=nextMonday();
+  document.getElementById('previewQuarters').innerHTML=Array.from({length:4},(_,i)=>{ const s=new Date(monday); s.setDate(monday.getDate()+i*7); const e=new Date(s); e.setDate(s.getDate()+6); return `<div class="pq-cell"><div class="ql">Q${i+1}</div><div class="qd">${fmtDate(s)}</div><div class="qd">${fmtDate(e)}</div><div class="qa">₹${(v/4).toFixed(0)}</div></div>`; }).join('');
+  box.classList.add('show');
+}
+
+// Quarter balances are derived from purchases (snack items only; 'not a snack' amounts are never stored as purchases).
+function recalc(c, carryIn=0) {
+  c.carryIn=carryIn; let carry=carryIn;
+  c.quarters=[0,1,2,3].map(i=>{ const s=c.snacks.filter(x=>x.quarter===i).reduce((a,x)=>a+x.price,0); const b=c.qBudget+carry-s; carry=Math.min(0,b); return {b,s}; });
+}
+function recalcChain(cycles) { let carry=0; cycles.forEach(c=>{ recalc(c,carry); carry=Math.min(0,c.quarters[3].b); }); }
+function recalcAll() {
+  state.history.sort((a,b)=>new Date(a.startDate)-new Date(b.startDate));
+  recalcChain(state.budget>0?[...state.history,state]:state.history);
+}
+function archiveCurrent() {
+  if(state.budget>0 && state.startDate) state.history.push({startDate:state.startDate,budget:state.budget,qBudget:state.qBudget,quarters:state.quarters,snacks:state.snacks});
+}
+function startNewPeriod() {
+  archiveCurrent(); state.budget=0; state.snacks=[]; state.startDate=null; save();
+  document.getElementById('mainApp').style.display='none'; document.getElementById('setupScreen').style.display='block';
+}
+function startBudget() {
+  const v=parseFloat(document.getElementById('budgetInput').value); if(!v||v<=0){alert('Enter a valid budget.');return;}
+  const monday=nextMonday(); state.budget=v; state.qBudget=v/4;
+  state.quarters=Array.from({length:4},()=>({b:v/4,s:0})); state.snacks=[]; state.startDate=monday.toISOString();
+  recalcAll(); save(); document.getElementById('setupScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; showTab('home');
+}
+
+function showTab(t) {
+  document.getElementById('homeTab').style.display=t==='home'?'block':'none';
+  document.getElementById('settingsTab').style.display=t==='settings'?'block':'none';
+  document.getElementById('nav-home').classList.toggle('active',t==='home');
+  document.getElementById('nav-settings').classList.toggle('active',t==='settings');
+  if(t==='home') renderHome();
+  if(t==='settings') showSubpage(null);
+}
+function showSubpage(page) {
+  ['stats','history','categories','import'].forEach(p=>{ document.getElementById('sub'+p.charAt(0).toUpperCase()+p.slice(1)).classList.toggle('active',p===page); });
+  document.getElementById('settingsMain').style.display=page?'none':'block';
+  if(page==='stats') renderStats();
+  if(page==='history') renderHistory();
+  if(page==='categories') renderCatGrid();
+  if(page==='import'){ document.getElementById('importFile').value=''; document.getElementById('importText').value=''; document.getElementById('importSummary').textContent=''; document.getElementById('importBtn').style.display='none'; }
+}
+
+function renderHome() {
+  const now=new Date();
+  document.getElementById('dateStr').textContent=now.toLocaleDateString('en-IN',{weekday:'long'});
+  document.getElementById('dateStr2').textContent=now.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+' · '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  const expired=isExpired();
+  document.getElementById('expiredBanner').style.display=expired?'block':'none';
+  document.getElementById('circleArea').style.display=expired?'none':'block';
+  if(expired) return;
+  const cq=getCurrentQ(); const q=state.quarters[cq];
+  const pct = Math.max(0, (q.b / state.qBudget) * 100);
+  const hex = q.b<0 ? '#ff6b6b' : getColor(pct);
+  const circle = document.getElementById('bigCircle');
+  circle.style.borderColor = hex; circle.style.boxShadow = `0 0 48px ${hex}30`;
+  document.getElementById('circleQ').textContent = `Quarter ${cq+1}`;
+  document.getElementById('circleDates').textContent = `${fmtDate(getQStart(cq))} – ${fmtDate(getQEnd(cq))}`;
+  const balEl = document.getElementById('circleBal'); balEl.textContent = `₹${q.b.toFixed(2)}`; balEl.style.color = hex;
+  document.getElementById('plusBtn').style.background = hex;
+  const others=[0,1,2,3].filter(i=>i!==cq);
+  document.getElementById('qDots').innerHTML=others.map(i=>{
+    const {color, hex:dHex} = qColorCode(state.quarters[i],i,cq);
+    if(color==='future'||color==='done') return `<div class="q-dot ${color}">Q${i+1}</div>`;
+    return `<div class="q-dot" style="border-color:${dHex};color:${dHex};background:${dHex}22">Q${i+1}</div>`;
+  }).join('');
+}
+
+// ---------- Log modal: total + split rows ----------
+let rows=[];            // {cat, amt, ns}
+let pickTarget=null;    // row index, or 'edit'
+let openParent=null; let addingKid=null; let addingParent=false;
+
+function openLogModal() {
+  rows=[{cat:null,amt:0,ns:false}];
+  document.getElementById('snackTotal').value='';
+  document.getElementById('overflowWarning').classList.remove('show');
+  renderRows();
+  document.getElementById('modalLog').classList.add('open');
+  setTimeout(()=>document.getElementById('snackTotal').focus(),300);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e,id) { if(e.target===document.getElementById(id)) closeModal(id); }
+
+function renderRows() {
+  const n=rows.length;
+  document.getElementById('rows').innerHTML=rows.map((r,i)=>{
+    const catBtn=r.ns?`<button class="cat-pick" disabled>🚫 Not a snack</button>`
+      :`<button class="cat-pick ${r.cat?'':'empty'}" onclick="openPicker(${i})">${r.cat?esc(r.cat):'Pick category ›'}</button>`;
+    let amt='';
+    if(n>1) amt=i<n-1?`<input class="amt-in" type="number" inputmode="decimal" step="0.5" value="${r.amt||''}" placeholder="₹" oninput="rows[${i}].amt=parseFloat(this.value)||0;updateAlloc()">`
+                     :`<input class="amt-in auto" id="lastAmt" readonly tabindex="-1">`;
+    const ns=n>1?`<button class="ns-btn ${r.ns?'on':''}" onclick="toggleNS(${i})" title="Not a snack">🚫</button>`:'';
+    const rm=n>1?`<button class="rm-btn" onclick="removeRow(${i})">✕</button>`:'';
+    return `<div class="item-row">${catBtn}${amt}${ns}${rm}</div>`;
+  }).join('');
+  document.getElementById('equalBtn').style.display=n>1?'block':'none';
+  document.getElementById('allocBar').style.display=n>1?'flex':'none';
+  updateAlloc();
+}
+function addRow(){ rows.push({cat:null,amt:0,ns:false}); renderRows(); }
+function removeRow(i){ rows.splice(i,1); renderRows(); }
+function toggleNS(i){ rows[i].ns=!rows[i].ns; renderRows(); }
+function equalSplit(){
+  const total=parseFloat(document.getElementById('snackTotal').value)||0; const n=rows.length; if(!total) return;
+  const each=Math.floor(total/n*100)/100; rows.forEach((r,i)=>{ if(i<n-1) r.amt=each; }); renderRows();
+}
+function updateAlloc() {
+  const total=parseFloat(document.getElementById('snackTotal').value)||0; const n=rows.length;
+  if(n===1) rows[0].amt=total;
+  else { const others=rows.slice(0,-1).reduce((a,r)=>a+r.amt,0); rows[n-1].amt=r2(total-others); const la=document.getElementById('lastAmt'); if(la) la.value=rows[n-1].amt.toFixed(2); }
+  const txt=document.getElementById('allocTxt'); let ok=total>0; let msg='';
+  if(n>1){
+    document.getElementById('allocBar').innerHTML=total>0?rows.map((r,i)=>`<div style="width:${Math.max(0,r.amt)/total*100}%;background:${r.ns?'#555':SPLIT_COLS[i%SPLIT_COLS.length]}"></div>`).join(''):'';
+    if(rows.some(r=>!(r.amt>0))){ ok=false; msg=total>0&&rows[n-1].amt<=0?`⚠️ Splits exceed total by ₹${(-rows[n-1].amt).toFixed(2)}`:'Enter each split amount'; }
+  }
+  const snackSum=r2(rows.filter(r=>!r.ns).reduce((a,r)=>a+r.amt,0)); const nsSum=r2(total-snackSum);
+  if(!msg&&n>1) msg=`Snacks ₹${snackSum.toFixed(2)}`+(nsSum>0?` · Not tracked ₹${nsSum.toFixed(2)}`:'');
+  if(rows.some(r=>!r.ns&&!r.cat)){ ok=false; if(!msg) msg=total>0?'Pick a category':''; }
+  if(!rows.some(r=>!r.ns)){ ok=false; msg='Nothing to track: every item is "Not a snack"'; }
+  txt.textContent=msg; txt.classList.toggle('bad',msg.startsWith('⚠️')||msg.startsWith('Nothing'));
+  document.getElementById('addBtn').disabled=!ok;
+  checkOverflow(snackSum);
+}
+function checkOverflow(amount) {
+  const cq=getCurrentQ(); const bal=state.quarters[cq].b; const warn=document.getElementById('overflowWarning');
+  if(amount>0&&amount>bal){ const ov=(amount-bal).toFixed(2); warn.textContent=cq<3?`⚠️ Overdrafts Q${cq+1} by ₹${ov} — carries to Q${cq+2}.`:`⚠️ Overdrafts Q${cq+1} by ₹${ov}. Carries to next cycle.`; warn.classList.add('show'); }
+  else warn.classList.remove('show');
+}
+function logSnack() {
+  updateAlloc(); if(document.getElementById('addBtn').disabled) return;
+  const snackRows=rows.filter(r=>!r.ns);
+  const total=parseFloat(document.getElementById('snackTotal').value);
+  const extra=r2(total-snackRows.reduce((a,r)=>a+r.amt,0));
+  const cq=getCurrentQ(); const now=new Date(); const base=Date.now();
+  const grouped=rows.length>1;
+  [...snackRows].reverse().forEach((r,k)=>{
+    const rec={id:base+k,price:r2(r.amt),cat:r.cat,quarter:cq,time:now.toISOString(),hour:now.getHours()};
+    if(grouped){ rec.gid=base; rec.gx=extra; }
+    state.snacks.unshift(rec);
+  });
+  recalcAll(); save();
+  const btn=document.getElementById('addBtn'); btn.textContent='✅'; btn.style.background='#4ade80';
+  setTimeout(()=>{ btn.textContent='Add'; btn.style.background=''; closeModal('modalLog'); renderHome(); },800);
+}
+
+// ---------- Category picker (parents → children) ----------
+function openPicker(target) {
+  pickTarget=target; addingKid=null; addingParent=false;
+  const cur=target==='edit'?editCat:rows[target].cat;
+  openParent=cur?parentOf(cur):null;
+  renderPicker(); document.getElementById('modalPick').classList.add('open');
+}
+function renderPicker() {
+  const cur=pickTarget==='edit'?editCat:(rows[pickTarget]||{}).cat;
+  document.getElementById('pickList').innerHTML=state.tree.map((p,pi)=>{
+    const open=openParent===p.name;
+    let h=`<button class="p-chip ${open?'open':''}" onclick="toggleParent(${pi})"><span>${esc(p.name)}</span><span style="color:var(--muted)">${p.kids.length} ${open?'▾':'›'}</span></button>`;
+    if(open){
+      h+=`<div class="k-grid">`+p.kids.map((k,ki)=>`<button class="k-chip ${k===cur?'sel':''}" onclick="pickKid(${pi},${ki})">${esc(k)}</button>`).join('');
+      h+=addingKid===pi?`<div class="new-row"><input id="newKid" placeholder="e.g. 🍩 Donut" onkeydown="if(event.key==='Enter')addKid(${pi})"><button onclick="addKid(${pi})">✓</button></div>`
+                       :`<button class="k-chip new" onclick="addingKid=${pi};renderPicker();setTimeout(()=>document.getElementById('newKid').focus(),50)">＋ New</button>`;
+      h+=`</div>`;
+    }
+    return h;
+  }).join('')+(addingParent?`<div class="new-row" style="margin-top:4px"><input id="newPar" placeholder="e.g. 🍜 Meals" onkeydown="if(event.key==='Enter')addParent()"><button onclick="addParent()">✓</button></div>`
+                          :`<button class="p-chip" style="border-style:dashed;color:var(--muted)" onclick="addingParent=true;renderPicker();setTimeout(()=>document.getElementById('newPar').focus(),50)"><span>＋ New parent</span></button>`);
+}
+function toggleParent(pi){ const n=state.tree[pi].name; openParent=openParent===n?null:n; addingKid=null; renderPicker(); }
+function choose(cat){
+  if(pickTarget==='edit'){ editCat=cat; document.getElementById('editCatBtn').textContent=cat; }
+  else { rows[pickTarget].cat=cat; renderRows(); }
+  closeModal('modalPick');
+}
+function pickKid(pi,ki){ choose(state.tree[pi].kids[ki]); }
+function addKid(pi){
+  let v=(document.getElementById('newKid').value||'').trim(); if(!v) return;
+  if(!hasEmoji(v)) v=ico(state.tree[pi].name)+' '+v;
+  if(state.cats.includes(v)){ alert('That category already exists.'); return; }
+  state.tree[pi].kids.push(v); save(); choose(v);
+}
+function addParent(){
+  let v=(document.getElementById('newPar').value||'').trim(); if(!v) return;
+  if(!hasEmoji(v)) v='📦 '+v;
+  if(state.tree.some(p=>p.name===v)){ alert('That parent already exists.'); return; }
+  state.tree.splice(state.tree.length-1,0,{name:v,kids:[]}); save();
+  addingParent=false; openParent=v; addingKid=state.tree.findIndex(p=>p.name===v); renderPicker();
+  setTimeout(()=>{ const el=document.getElementById('newKid'); if(el) el.focus(); },50);
+}
+
+// ---------- Edit modal: re-tag category + edit time (time applies to whole split) ----------
+let editingId=null; let editCat=null;
+function toLocalInput(d) { const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+function openEditModal(id) {
+  const s=state.snacks.find(x=>x.id===id); if(!s) return;
+  editingId=id; editCat=s.cat;
+  document.getElementById('editCatBtn').textContent=s.cat;
+  document.getElementById('editPrice').textContent='₹'+s.price.toFixed(2);
+  document.getElementById('editGroupNote').style.display=s.gid?'block':'none';
+  const ti=document.getElementById('editTime'); ti.value=toLocalInput(new Date(s.time));
+  const cs=new Date(state.startDate); cs.setHours(0,0,0,0); const ce=new Date(cs); ce.setDate(ce.getDate()+27); ce.setHours(23,59);
+  ti.min=toLocalInput(cs); ti.max=toLocalInput(ce);
+  document.getElementById('modalEdit').classList.add('open');
+}
+function saveEdit() {
+  const s=state.snacks.find(x=>x.id===editingId); const v=document.getElementById('editTime').value;
+  if(!s||!v) return;
+  const d=new Date(v); if(isNaN(d)) return;
+  const cs=new Date(state.startDate); cs.setHours(0,0,0,0);
+  const q=Math.floor((d-cs)/(7*86400000));
+  if(q<0||q>3){ alert('Pick a date inside the current cycle ('+fmtDate(cs)+' – '+fmtDate(getQEnd(3))+').'); return; }
+  s.cat=editCat;
+  const group=s.gid?state.snacks.filter(x=>x.gid===s.gid):[s];
+  group.forEach(x=>{ x.time=d.toISOString(); x.hour=d.getHours(); x.quarter=q; });
+  state.snacks.sort((a,b)=>new Date(b.time)-new Date(a.time));
+  recalcAll(); save(); closeModal('modalEdit'); renderHistory();
+}
+function deleteSnack(id) {
+  if(!state.snacks.find(x=>x.id===id)) return;
+  state.snacks=state.snacks.filter(x=>x.id!==id); recalcAll(); save(); renderHistory();
+}
+
+// ---------- Edit Categories ----------
+function renderCatGrid() {
+  document.getElementById('catGrid').innerHTML=state.tree.map((p,pi)=>`<div class="par-card">
+    <div class="par-name"><span>${esc(p.name)}</span>${p.name===MISC?'':`<button class="cat-del" onclick="deleteParent(${pi})" title="Delete parent (children move to Misc)">✕</button>`}</div>
+    <div class="cat-grid">${p.kids.map((k,ki)=>`<div class="cat-chip"><span>${esc(k)}</span><button class="cat-del" onclick="deleteKid(${pi},${ki})">✕</button></div>`).join('')}</div>
+    <div class="add-cat-row"><input type="text" id="nk${pi}" placeholder="New in ${esc(lbl(p.name))}"><button class="add-cat-btn" onclick="addKidFromGrid(${pi})">+</button></div></div>`).join('');
+}
+function addKidFromGrid(pi){
+  let v=document.getElementById('nk'+pi).value.trim(); if(!v) return;
+  if(!hasEmoji(v)) v=ico(state.tree[pi].name)+' '+v;
+  if(state.cats.includes(v)){ alert('That category already exists.'); return; }
+  state.tree[pi].kids.push(v); save(); renderCatGrid();
+}
+function addParentFromGrid(){
+  let v=document.getElementById('newParInput').value.trim(); if(!v) return;
+  if(!hasEmoji(v)) v='📦 '+v;
+  if(state.tree.some(p=>p.name===v)){ alert('That parent already exists.'); return; }
+  state.tree.splice(state.tree.length-1,0,{name:v,kids:[]}); save(); renderCatGrid(); document.getElementById('newParInput').value='';
+}
+// Deleting only removes it from the picker; purchases keep their category and show under Misc.
+function deleteKid(pi,ki){ state.tree[pi].kids.splice(ki,1); save(); renderCatGrid(); }
+function deleteParent(pi){ const p=state.tree[pi]; if(p.name===MISC) return; state.tree.find(x=>x.name===MISC).kids.push(...p.kids); state.tree.splice(pi,1); save(); renderCatGrid(); }
+
+// ---------- History (splits grouped) ----------
+function itemLine(s,cls){
+  return `<div class="${cls}" onclick="openEditModal(${s.id})"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">${ico(s.cat)}</div><div style="min-width:0"><div class="hi-name">${esc(lbl(s.cat))}</div><div class="hi-meta">${esc(lbl(parentOf(s.cat)))}</div></div></div><div style="display:flex;align-items:center;"><div class="hi-price">₹${s.price.toFixed(2)}</div><button class="del-btn" onclick="event.stopPropagation();deleteSnack(${s.id})">🗑️</button></div></div>`;
+}
+function renderHistory() {
+  const el=document.getElementById('historyList');
+  if(!state.snacks.length){ el.innerHTML=`<div class="empty-state"><div class="big">📋</div><p>Nothing yet.</p></div>`; return; }
+  const seen=new Set(); let html='';
+  state.snacks.forEach(s=>{
+    const d=new Date(s.time); const ts=fmtDate(d)+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    if(!s.gid){
+      html+=`<div class="history-item" style="cursor:pointer" onclick="openEditModal(${s.id})"><div style="display:flex;align-items:center;gap:12px;min-width:0"><div class="hi-icon">${ico(s.cat)}</div><div style="min-width:0"><div class="hi-name">${esc(lbl(s.cat))}</div><div class="hi-meta">${esc(lbl(parentOf(s.cat)))} · Q${s.quarter+1} · ${ts}</div></div></div><div style="display:flex;align-items:center;"><div class="hi-price">₹${s.price.toFixed(2)}</div><button class="del-btn" onclick="event.stopPropagation();deleteSnack(${s.id})">🗑️</button></div></div>`;
+      return;
+    }
+    if(seen.has(s.gid)) return; seen.add(s.gid);
+    const items=state.snacks.filter(x=>x.gid===s.gid); const gx=s.gx||0;
+    const tot=items.reduce((a,x)=>a+x.price,0)+gx;
+    html+=`<div class="grp-card"><div class="grp-head"><div><div class="hi-name">🧾 Split purchase</div><div class="hi-meta">Q${s.quarter+1} · ${ts}</div></div><div class="hi-price" style="color:var(--text)">₹${tot.toFixed(2)}</div></div>`
+      +items.map(x=>itemLine(x,'grp-item')).join('')
+      +(gx>0?`<div class="grp-item ns"><div style="display:flex;align-items:center;gap:12px"><div class="hi-icon">🚫</div><div class="hi-name">Not a snack</div></div><div class="hi-price" style="color:var(--muted);padding-right:31px">₹${gx.toFixed(2)}</div></div>`:'')
+      +`</div>`;
+  });
+  el.innerHTML=html;
+}
+
+// ---------- Stats (categories by parent, tap to expand) ----------
+let statsScope='cycle'; const statsOpen=new Set();
+function setScope(s){ statsScope=s; renderStats(); }
+function toggleStatParent(name){ statsOpen.has(name)?statsOpen.delete(name):statsOpen.add(name); renderStats(); }
+function renderPastCycles() {
+  if(!state.history.length) return '';
+  return `<div class="section-title">Past Cycles</div>`+[...state.history].reverse().map(c=>{
+    const st=new Date(c.startDate); const en=new Date(st); en.setDate(en.getDate()+27);
+    const spent=c.snacks.reduce((a,x)=>a+x.price,0); const left=c.budget+(c.carryIn||0)-spent;
+    return `<div class="cyc-card"><div class="cyc-top"><span>${fmtDate(st)} – ${fmtDate(en)}</span><span style="color:${left<0?'#ff6b6b':'#4ade80'}">₹${left.toFixed(0)} left</span></div>
+      <div class="cyc-sub">Budget ₹${c.budget.toFixed(0)}${c.carryIn?` · Carried ₹${c.carryIn.toFixed(0)}`:''} · Spent ₹${spent.toFixed(0)} · ${c.snacks.length} purchases</div>
+      <div class="cyc-sub">${c.quarters.map((q,i)=>`Q${i+1} ₹${q.s.toFixed(0)}`).join(' · ')}</div></div>`;
+  }).join('');
+}
+function renderStats() {
+  const all=statsScope==='all';
+  const snacks=all?state.history.flatMap(c=>c.snacks).concat(state.snacks):state.snacks;
+  const toggle=`<div class="scope-row"><button class="scope-btn ${all?'':'on'}" onclick="setScope('cycle')">This cycle</button><button class="scope-btn ${all?'on':''}" onclick="setScope('all')">All time</button></div>`;
+  if(!snacks.length){document.getElementById('statsContent').innerHTML=toggle+`<div class="empty-state"><div class="big">📊</div><p>Log some snacks first.</p></div>`+(all?renderPastCycles():'');return;}
+  const total=snacks.reduce((a,s)=>a+s.price,0); const avg=total/snacks.length;
+  const priceMap={}; snacks.forEach(s=>{const k=s.price.toFixed(2);priceMap[k]=(priceMap[k]||0)+1;});
+  const commonP=Object.entries(priceMap).sort((a,b)=>b[1]-a[1])[0];
+  const pMap={}; snacks.forEach(s=>{ const p=parentOf(s.cat); if(!pMap[p]) pMap[p]={n:0,amt:0,kids:{}}; pMap[p].n++; pMap[p].amt+=s.price; pMap[p].kids[s.cat]=(pMap[p].kids[s.cat]||0)+1; });
+  const sortedP=Object.entries(pMap).sort((a,b)=>b[1].n-a[1].n);
+  const tb={Morning:0,Afternoon:0,Evening:0,Night:0};
+  snacks.forEach(s=>{if(s.hour>=5&&s.hour<12)tb.Morning++;else if(s.hour>=12&&s.hour<17)tb.Afternoon++;else if(s.hour>=17&&s.hour<21)tb.Evening++;else tb.Night++;});
+  const peakTime=Object.entries(tb).sort((a,b)=>b[1]-a[1])[0][0];
+  const qSpend=[0,0,0,0]; snacks.forEach(s=>{qSpend[s.quarter]+=s.price;});
+  const maxP=sortedP[0][1].n;
+  const catBars=sortedP.map(([p,v])=>{
+    const open=statsOpen.has(p);
+    let h=`<div class="bar-row click" onclick="toggleStatParent('${esc(p).replace(/'/g,"\\'")}')"><div class="bar-label">${esc(p)}</div><div class="bar-track"><div class="bar-fill" style="width:${v.n/maxP*100}%;background:#f7c948"></div></div><div class="bar-val">${v.n}x</div></div>`;
+    if(open) h+=Object.entries(v.kids).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<div class="bar-row kid"><div class="bar-label">${esc(k)}</div><div class="bar-track"><div class="bar-fill" style="width:${n/v.n*100}%;background:#f7c94888"></div></div><div class="bar-val">${n}x</div></div>`).join('');
+    return h;
+  }).join('');
+  document.getElementById('statsContent').innerHTML=toggle+`
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Spent</div><div class="stat-value">₹${total.toFixed(0)}</div><div class="stat-sub">${snacks.length} items</div></div>
+      <div class="stat-card"><div class="stat-label">Avg per Item</div><div class="stat-value">₹${avg.toFixed(0)}</div></div>
+      <div class="stat-card"><div class="stat-label">Common Price</div><div class="stat-value">₹${commonP[0]}</div><div class="stat-sub">${commonP[1]}× bought</div></div>
+      <div class="stat-card"><div class="stat-label">Peak Time</div><div class="stat-value" style="font-size:15px">${peakTime}</div><div class="stat-sub">${tb[peakTime]} items</div></div>
+      ${all?`<div class="stat-card"><div class="stat-label">Cycles</div><div class="stat-value">${state.history.length+(state.budget>0?1:0)}</div><div class="stat-sub">incl. current</div></div>`:`<div class="stat-card"><div class="stat-label">Budget Left</div><div class="stat-value" style="color:${state.budget+(state.carryIn||0)-total<0?'#ff6b6b':'#4ade80'}">₹${(state.budget+(state.carryIn||0)-total).toFixed(0)}</div><div class="stat-sub">of ₹${state.budget}${state.carryIn?` (₹${state.carryIn.toFixed(0)} carried)`:''}</div></div>`}
+      <div class="stat-card"><div class="stat-label">Top Category</div><div class="stat-value" style="font-size:14px">${ico(sortedP[0][0])}</div><div class="stat-sub">${esc(lbl(sortedP[0][0]))}</div></div>
+    </div>
+    <div class="section-title">Time of Day</div>
+    <div class="stat-card" style="margin-bottom:12px;"><div class="time-grid">${Object.entries(tb).map(([k,v])=>`<div class="time-cell"><div class="time-cell-label">${k}</div><div class="time-cell-val" style="color:${v===Math.max(...Object.values(tb))?'#f7c948':'var(--text)'}">${v}</div></div>`).join('')}</div></div>
+    <div class="section-title">Categories · tap to expand</div>
+    <div class="stat-card" style="margin-bottom:12px;">${catBars}</div>
+    ${all?'':`<div class="section-title">Quarter Spending</div>
+    <div class="stat-card">${qSpend.map((v,i)=>{const pct=Math.max(0,(1-v/state.qBudget)*100);const c=getColor(pct);return `<div class="bar-row"><div class="bar-label">Q${i+1}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,v/state.qBudget*100)}%;background:${c}"></div></div><div class="bar-val">₹${v.toFixed(0)}</div></div>`;}).join('')}</div>`}`+(all?renderPastCycles():'');
+}
+
+// ---- CSV import ----
+// Format (header required):
+// type,cycle,start,budget,date,time,category,amount
+// cycle,1,2026-05-01,2000,,,,
+// txn,1,,,2026-05-02,10:26,🍟 Chips,40
+let pendingImport=null;
+let CSV_SEP=',';
+function parseCSVLine(l){ const out=[];let cur='',q=false; for(const ch of l){ if(ch==='"'){q=!q;} else if(ch===CSV_SEP&&!q){out.push(cur);cur='';} else cur+=ch; } out.push(cur); return out.map(s=>s.trim()); }
+function readImport(e) {
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>checkImport(r.result);
+  r.onerror=()=>{ document.getElementById('importSummary').textContent='❌ Could not read file'; };
+  r.readAsText(f);
+}
+function checkImport(text) {
+  {
+    const sum=document.getElementById('importSummary'); const btn=document.getElementById('importBtn');
+    try { if(!text||!text.trim()) throw new Error('Nothing to import'); pendingImport=buildImport(text); }
+    catch(err){ pendingImport=null; btn.style.display='none'; sum.textContent='❌ '+err.message; return; }
+    const p=pendingImport; const n=p.cycles.reduce((a,c)=>a+c.snacks.length,0);
+    sum.textContent=`✅ ${p.cycles.length} cycles, ${n} purchases.\n`+p.cycles.map(c=>{const st=new Date(c.startDate);const en=new Date(st);en.setDate(en.getDate()+27);return `${fmtDate(st)} – ${fmtDate(en)}: ₹${c.budget} budget, ${c.snacks.length} buys, ₹${c.snacks.reduce((a,x)=>a+x.price,0).toFixed(0)} spent`;}).join('\n')+`\nActive cycle: ${p.active?fmtDate(new Date(p.active.startDate)):'none (all past)'}`;
+    btn.style.display='block';
+  }
+}
+function buildImport(text) {
+  if(text.startsWith('PK')) throw new Error('This is the Excel (.xlsx) file. Pick the .csv file instead.');
+  text=text.replace(/\u0000/g,'').replace(/^[\uFEFF\uFFFE\u00EF\u00BB\u00BF\s]+/,'');
+  const lines=text.split(/\r\n|\r|\n/).filter(l=>l.replace(/[,;\t\s"]/g,''));
+  if(!lines.length) throw new Error('File is empty');
+  const first=lines[0]; CSV_SEP=[',',';','\t'].sort((a,b)=>first.split(b).length-first.split(a).length)[0];
+  const head=parseCSVLine(first).map(h=>h.toLowerCase().replace(/[^a-z]/g,'')).filter(Boolean);
+  if(head.slice(0,8).join(',')!=='type,cycle,start,budget,date,time,category,amount') throw new Error('Unexpected header: '+first.slice(0,80));
+  const cycles={}; const txns=[];
+  lines.slice(1).forEach((l,i)=>{
+    const [type,cyc,start,budget,date,time,cat,amt]=parseCSVLine(l);
+    if(type==='cycle'){ const b=parseFloat(budget); const d=new Date(start+'T00:00'); if(!(b>0)||isNaN(d)) throw new Error(`Row ${i+2}: bad cycle`); cycles[cyc]={startDate:d.toISOString(),budget:b,qBudget:b/4,snacks:[]}; }
+    else if(type==='txn'){ const d=new Date(date+'T'+time); const p=parseFloat(amt); if(isNaN(d)||!(p>0)||!cat) throw new Error(`Row ${i+2}: bad purchase`); txns.push({cyc,d,p,cat}); }
+    else throw new Error(`Row ${i+2}: unknown type "${type}"`);
+  });
+  let id=Date.now();
+  txns.sort((a,b)=>a.d-b.d).forEach(t=>{
+    const c=cycles[t.cyc]; if(!c) throw new Error(`Purchase on ${t.d.toDateString()} has no cycle ${t.cyc}`);
+    const st=new Date(c.startDate); const q=Math.floor((t.d-st)/(7*86400000));
+    if(q<0||q>3) throw new Error(`Purchase on ${t.d.toDateString()} is outside cycle ${t.cyc}`);
+    c.snacks.unshift({id:id++,price:t.p,cat:t.cat,quarter:q,time:t.d.toISOString(),hour:t.d.getHours()});
+  });
+  const list=Object.values(cycles).sort((a,b)=>new Date(a.startDate)-new Date(b.startDate));
+  if(!list.length) throw new Error('No cycles in file');
+  recalcChain(list);
+  const now=Date.now(); const last=list[list.length-1];
+  const active=(now<new Date(last.startDate).getTime()+28*86400000)?last:null;
+  return {cycles:list,active};
+}
+function applyImport() {
+  if(!pendingImport) return;
+  const {cycles,active}=pendingImport;
+  const tree=state.tree; const cur=active||cycles[cycles.length-1];
+  state={budget:cur.budget,qBudget:cur.qBudget,quarters:cur.quarters,snacks:cur.snacks,startDate:cur.startDate,cats:[],history:cycles.slice(0,-1),tree};
+  ensureTree(); save(); pendingImport=null;
+  document.getElementById('setupScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; showTab('home');
+}
+</script>
+</body>
+</html>
