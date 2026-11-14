@@ -1,5 +1,5 @@
 // BETA service worker — touches ONLY caches named treattrack-beta-*
-const CACHE = 'treattrack-beta-1';
+const CACHE = 'treattrack-beta-2';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {

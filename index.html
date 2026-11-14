@@ -249,7 +249,7 @@
           <div class="settings-row" onclick="twoTap(this,'copy','replace beta data',copyFromMain)"><span>Re-copy data from main app</span><span class="arr">›</span></div>
           <div class="settings-row danger" onclick="twoTap(this,'reset','reset beta',resetApp)"><span>Reset beta</span><span class="arr">›</span></div>
         </div>
-        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β1 · splits + category tree · main app data is read-only here</div>
+        <div style="text-align:center;font-size:11px;color:var(--muted);margin-top:18px">β2 · splits + category tree + carry display · main app data is read-only here</div>
       </div>
       <div id="subStats" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">Stats</div><div id="statsContent"></div></div>
       <div id="subHistory" class="subpage"><button class="back-btn" onclick="showSubpage(null)">‹ Settings</button><div class="page-title">History</div><div id="historyList"></div></div>
@@ -710,7 +710,10 @@ function renderPastCycles() {
   return `<div class="section-title">Past Cycles</div>`+[...state.history].reverse().map(c=>{
     const st=new Date(c.startDate); const en=new Date(st); en.setDate(en.getDate()+27);
     const spent=c.snacks.reduce((a,x)=>a+x.price,0); const left=c.budget+(c.carryIn||0)-spent;
-    return `<div class="cyc-card"><div class="cyc-top"><span>${fmtDate(st)} – ${fmtDate(en)}</span><span style="color:${left<0?'#ff6b6b':'#4ade80'}">₹${left.toFixed(0)} left</span></div>
+    const out=Math.min(0,c.quarters[3].b);
+    return `<div class="cyc-card"><div class="cyc-top"><span>${fmtDate(st)} – ${fmtDate(en)}</span></div>
+      <div class="cyc-sub" style="display:flex;justify-content:space-between;margin-top:6px"><span>Net balance this cycle</span><b style="color:${left<0?'#ff6b6b':'#4ade80'}">₹${left.toFixed(0)}</b></div>
+      <div class="cyc-sub" style="display:flex;justify-content:space-between"><span>Carried to next cycle</span><b style="color:${out<0?'#ff6b6b':'var(--text)'}">₹${out.toFixed(0)}</b></div>
       <div class="cyc-sub">Budget ₹${c.budget.toFixed(0)}${c.carryIn?` · Carried ₹${c.carryIn.toFixed(0)}`:''} · Spent ₹${spent.toFixed(0)} · ${c.snacks.length} purchases</div>
       <div class="cyc-sub">${c.quarters.map((q,i)=>`Q${i+1} ₹${q.s.toFixed(0)}`).join(' · ')}</div></div>`;
   }).join('');
