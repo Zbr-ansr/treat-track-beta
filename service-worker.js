@@ -1,5 +1,5 @@
 // BETA service worker — touches ONLY caches named treattrack-beta-*
-const CACHE = 'treattrack-beta-4';
+const CACHE = 'treattrack-beta-6';
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png',
   './fonts/ibm-plex-mono-latin-400-normal.woff2', './fonts/ibm-plex-mono-latin-500-normal.woff2',
   './fonts/ibm-plex-mono-latin-ext-400-normal.woff2', './fonts/ibm-plex-mono-latin-ext-500-normal.woff2',
